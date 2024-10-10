@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Event {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  description   String
+  date          DateTime
+  venueId       String @db.ObjectId
+  venue         Venue  @relation(fields: [venueId], references: [id])
+
+// ticketIds    String @db.ObjectId is this correct or below one?
+  ticketIds     String[] @db.ObjectId
+  tickets       Ticket[]
+
+  orders     Order[]  // Track all orders (ticket purchases) for this event
+ 
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt()
+}
+
+model Venue { 
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  location      String
+  capacity      Int
+  events        Event[]  // A venue can host multiple events
+
+  createdAt     DateTime @default(now())
+}
+
+model Ticket {
+  id              String    @id @default(auto()) @map("_id") @db.ObjectId
+  type            String   // Ticket type (e.g., VIP, General Admission)
+  price           Float    // Ticket price
+  numberOfTickets Int      // Total number of tickets available for this type
+  ticketsSold     Int      @default(0) // Track how many tickets are sold
+
+  event           Event    @relation(fields: [eventId], references: [id])
+  eventId         String   @db.ObjectId        
+
+  orders          Order[] 
+}
+
+model Order {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  event      Event    @relation(fields: [eventId], references: [id]) // Event associated with the order
+  eventId    String   @db.ObjectId
+  ticket     Ticket   @relation(fields: [ticketId], references: [id]) // Ticket type associated with the order
+  ticketId   String   @db.ObjectId
+  quantity   Int      // Number of tickets bought
+
+  stripeCustomerId    String? @unique @map(name: "stripe_customer_id")
+  stripePriceId           String?    @map(name: "stripe_price_id")
+
+  createdAt  DateTime @default(now()) // Timestamp of purchase
+}
