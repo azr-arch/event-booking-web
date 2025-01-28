@@ -21,7 +21,7 @@ interface EventsProps {
     })[];
 }
 
-export const Events = ({ data }: EventsProps) => {
+export const Events = () => {
     return (
         <>
             <div className="flex items-center space-x-2">
@@ -53,7 +53,7 @@ export const Events = ({ data }: EventsProps) => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {data.map((event) => (
+                            {/* {data.map((event) => (
                                 <TableRow key={event.id}>
                                     <TableCell className="font-medium">{event.name}</TableCell>
                                     <TableCell>{formatDate(event.date)}</TableCell>
@@ -69,7 +69,7 @@ export const Events = ({ data }: EventsProps) => {
                                         </Button>
                                     </TableCell>
                                 </TableRow>
-                            ))}
+                            ))} */}
                         </TableBody>
                     </Table>
                 </CardContent>

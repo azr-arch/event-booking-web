@@ -1,5 +1,9 @@
-import { SignIn } from "@clerk/nextjs";
+import { LoginForm } from "../../_components/login-form";
 
-export default function Page() {
-    return <SignIn />;
+export default function SignIn() {
+    return (
+        <div className="flex w-full max-w-sm flex-col gap-6">
+            <LoginForm />
+        </div>
+    );
 }

@@ -13,57 +13,157 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Event {
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  name          String
-  description   String
-  date          DateTime
-  venueId       String @db.ObjectId
-  venue         Venue  @relation(fields: [venueId], references: [id])
-
-// ticketIds    String @db.ObjectId is this correct or below one?
-  ticketIds     String[] @db.ObjectId
-  tickets       Ticket[]
-
-  orders     Order[]  // Track all orders (ticket purchases) for this event
- 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt()
+enum Role {
+  ADMIN
+  ORGANIZER
+  ATTENDEE
 }
 
-model Venue { 
-  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+model User {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
   name          String
-  location      String
-  capacity      Int
-  events        Event[]  // A venue can host multiple events
+  email         String  @unique
+  password      String
+  role          Role    @default(ATTENDEE)
 
   createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt()
+
+  accounts      Account[]
+  sessions      Session[]
+
+  createdEvents Event[] @relation("EventCreator") // Events created by ORGANIZER or ADMIN
+  orders        Order[] // Orders placed by user (ATTENDEE)
+  attending     UserEvent[] // Events user is currently attending
+  
+  // @@index([email])
+}
+
+model Account {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  userId             String  @db.ObjectId
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? @db.String
+  access_token       String? @db.String
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? @db.String
+  session_state      String?
+ 
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+ 
+model Session {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique @map("session_token")
+  expires      DateTime
+  userId       String   @db.ObjectId
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@map("sessions")
+}
+
+model VerificationToken {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  identifier String
+  token      String
+  expires    DateTime
+ 
+  @@unique([identifier, token])
+  @@map("verification_tokens")
+}
+
+model Event {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  title         String
+  description   String
+  startDate     DateTime
+  endDate       DateTime
+
+  location      Location  @relation(fields: [locationId], references: [id])
+  locationId    String   @db.ObjectId
+
+  creator       User  @relation("EventCreator", fields: [creatorId], references: [id])
+  creatorId     String  @db.ObjectId
+
+  tickets       Ticket[]  // Tickets available for event
+  attendees     UserEvent[]
+
+  images        String[]    // Urls to event images
+
+  orders        Order[]
+
+  // status        EventStatus @default(DRAFT)
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt()
+
+  @@index([startDate])
+  // @@index([status])
 }
 
 model Ticket {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  type            String   // Ticket type (e.g., VIP, General Admission)
-  price           Float    // Ticket price
-  numberOfTickets Int      // Total number of tickets available for this type
-  ticketsSold     Int      @default(0) // Track how many tickets are sold
+  event           Event @relation(fields: [eventId], references: [id])
+  eventId         String @db.ObjectId
+  type            String   // e.g. "VIP", "General"
+  price           Float
+  quatityAvailable    Int
+  startSaleDate   DateTime
+  endSaleDate     DateTime
 
-  event           Event    @relation(fields: [eventId], references: [id])
-  eventId         String   @db.ObjectId        
-
-  orders          Order[] 
+  orders          TicketOrder[]
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Order {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  event      Event    @relation(fields: [eventId], references: [id]) // Event associated with the order
-  eventId    String   @db.ObjectId
-  ticket     Ticket   @relation(fields: [ticketId], references: [id]) // Ticket type associated with the order
-  ticketId   String   @db.ObjectId
-  quantity   Int      // Number of tickets bought
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  user          User          @relation(fields: [userId], references: [id])
+  userId        String        @db.ObjectId
+  event         Event         @relation(fields: [eventId], references: [id])
+  eventId       String        @db.ObjectId
+  tickets       TicketOrder[]
+  totalAmount   Float
+  // paymentStatus PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+}
 
-  stripeCustomerId    String? @unique @map(name: "stripe_customer_id")
-  stripePriceId           String?    @map(name: "stripe_price_id")
+// Embedded document (for MongoDB) within Order
+model TicketOrder {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  ticket   Ticket @relation(fields: [ticketId], references: [id])
+  ticketId String @db.ObjectId
+  quantity Int
 
-  createdAt  DateTime @default(now()) // Timestamp of purchase
+  order     Order @relation(fields: [orderId], references: [id])  
+  orderId   String  @db.ObjectId
+}
+
+model Location {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  address   String
+  latitude  Float?
+  longitude Float?
+  events    Event[]
+}
+
+// Join table for User <-> Event (many-to-many with role)
+model UserEvent {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  user     User   @relation(fields: [userId], references: [id])
+  userId   String @db.ObjectId
+  event    Event  @relation(fields: [eventId], references: [id])
+  eventId  String @db.ObjectId
+  role     Role   @default(ATTENDEE) // e.g., ORGANIZER, ATTENDEE
+
+  @@unique([userId, eventId]) // Prevent duplicate entries
 }

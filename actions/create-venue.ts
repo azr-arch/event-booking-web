@@ -1,7 +1,6 @@
 "use server";
 
 import { prismaDb } from "@/lib/db";
-import { currentUser } from "@clerk/nextjs/server";
 
 export const createVenueAction = async ({
     name,
@@ -14,18 +13,17 @@ export const createVenueAction = async ({
 }) => {
     let newVenue;
     try {
-        const user = await currentUser();
-
-        if (!user) {
-            return { error: "Unauthorized0" };
-        }
-        newVenue = await prismaDb.venue.create({
-            data: {
-                name,
-                location,
-                capacity,
-            },
-        });
+        // const user = await currentUser();
+        // if (!user) {
+        //     return { error: "Unauthorized0" };
+        // }
+        // newVenue = await prismaDb.venue.create({
+        //     data: {
+        //         name,
+        //         location,
+        //         capacity,
+        //     },
+        // });
     } catch (error) {
         console.log("error in createVenueAction: ", error);
         return { error: "Internal error" };

@@ -4,12 +4,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 const EventsPage = async () => {
-    const data = await prismaDb.event.findMany({
-        include: {
-            venue: true,
-            tickets: true,
-        },
-    });
+    // const data = await prismaDb.event.findMany({
+    //     include: {
+    //         venue: true,
+    //         tickets: true,
+    //     },
+    // });
 
     return (
         <section className="container mx-auto p-4 sm:p-6 space-y-6 sm:space-y-8">
@@ -19,7 +19,7 @@ const EventsPage = async () => {
                     <Button>Add New Event</Button>
                 </Link>
             </div>
-            <Events data={data} />
+            <Events />
         </section>
     );
 };
