@@ -22,7 +22,7 @@ export async function register(values: z.infer<typeof signUpSchema>) {
         const hashedPassword = await hashPassword(password);
 
         // Create user
-        await prismaDb.user.create({
+        const createdUser = await prismaDb.user.create({
             data: {
                 name,
                 email,
@@ -31,13 +31,10 @@ export async function register(values: z.infer<typeof signUpSchema>) {
             },
         });
 
-        // Sign in user
+        console.log({ createdUser });
 
-        await signIn("credentials", {
-            email,
-            password,
-            redirectTo: "/",
-        });
+        // Sign in user
+        await signIn("credentials", { email, password, redirectTo: "/dashboard" });
     } catch (e) {
         console.log("[REGISTER_ERR]: ", e);
         if (e instanceof AuthError) {

@@ -17,9 +17,14 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { LoaderCircleIcon } from "lucide-react";
+import { LoaderCircleIcon, XCircle } from "lucide-react";
+import { register } from "@/actions/auth/register";
+import { useState } from "react";
+import Link from "next/link";
 
 export const RegisterForm = () => {
+    const [error, setError] = useState("");
+
     const form = useForm<z.infer<typeof signUpSchema>>({
         resolver: zodResolver(signUpSchema),
         defaultValues: {
@@ -30,10 +35,17 @@ export const RegisterForm = () => {
     });
 
     // 2. Define a submit handler.
-    function onSubmit(values: z.infer<typeof signUpSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values);
+    async function onSubmit(values: z.infer<typeof signUpSchema>) {
+        try {
+            const res = await register(values);
+            if (res?.error) {
+                setError(res.error);
+                return;
+            }
+        } catch (e: never) {
+            setError(e.message ?? "Something went wrong");
+            console.log(e);
+        }
     }
 
     const { isSubmitting } = form.formState;
@@ -49,7 +61,16 @@ export const RegisterForm = () => {
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <form
+                            onSubmit={form.handleSubmit(onSubmit)}
+                            onChange={() => {
+                                // Clearing out error
+                                if (error) {
+                                    setError("");
+                                }
+                            }}
+                            className="space-y-4"
+                        >
                             <FormField
                                 control={form.control}
                                 name="name"
@@ -105,6 +126,13 @@ export const RegisterForm = () => {
                                 )}
                             />
 
+                            {error && (
+                                <div className="p-2 rounded-sm space-x-2 flex items-center bg-red-100 text-red-500 fade-in-50 ">
+                                    <XCircle className="w-4 h-4" />
+                                    <span className="text-sm font-medium">{error}</span>
+                                </div>
+                            )}
+
                             <Button disabled={isSubmitting} type="submit" className="w-full">
                                 {isSubmitting ? (
                                     <LoaderCircleIcon className="animate-spin" />
@@ -112,6 +140,13 @@ export const RegisterForm = () => {
                                     "Create an account"
                                 )}
                             </Button>
+
+                            <div className="mt-4 text-center text-sm text-violet-500">
+                                Have an account?{" "}
+                                <Link href="/sign-in" className="underline underline-offset-4">
+                                    Sign In
+                                </Link>
+                            </div>
                         </form>
                     </Form>
                 </CardContent>

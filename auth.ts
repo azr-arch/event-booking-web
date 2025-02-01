@@ -37,7 +37,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                     if (!user) {
                         throw new CustomError("No account is registered with given email");
                     }
-                    if (await comparePassword(credentials.password as string, user.password)) {
+
+                    const isPasswordSame = await comparePassword(
+                        credentials.password as string,
+                        user.password
+                    );
+                    if (!isPasswordSame) {
                         throw new CustomError("Password not match");
                     }
 
@@ -51,32 +56,45 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         }),
     ],
     callbacks: {
-        authorized({ request: { nextUrl }, auth }) {
-            const isLoggedIn = !!auth?.user;
-            const { pathname } = nextUrl;
+        authorized({ request, auth }) {
+            // const isLoggedIn = !!auth?.user;
+            // const { pathname } = nextUrl;
 
-            console.log({ auth });
-            console.log(!!auth);
-            if (pathname.startsWith("/auth/signin") && isLoggedIn) {
-                return Response.redirect(new URL("/", nextUrl));
-            }
-            // if (pathname.startsWith("/page2") && role !== "admin") {
+            // console.log({ auth });
+            // console.log(!!auth);
+            // if (pathname.startsWith("/auth/signin") && isLoggedIn) {
             //     return Response.redirect(new URL("/", nextUrl));
             // }
-            return !!auth;
+            // // if (pathname.startsWith("/page2") && role !== "admin") {
+            // //     return Response.redirect(new URL("/", nextUrl));
+            // // }
+            // return !!auth;
+
+            console.log("============================================");
+            const isLoggedIn = auth?.user;
+            const isOnDashboard = request.nextUrl.pathname.startsWith("/dashboard");
+            if (isOnDashboard) {
+                if (isLoggedIn) return true;
+                return false;
+            } else if (isLoggedIn) {
+                return Response.redirect(new URL("/dashboard", request.nextUrl));
+            }
+            return true;
         },
+        // how do i typecast this user to have my object
         async jwt({ token, user }) {
             console.log({ token, user });
 
             if (user) {
-                token.role = user.role; // Add user role to the token
+                const customUser = user as User;
+                token.role = customUser?.role;
             }
             return token;
         },
         async session({ session, token }) {
-            console.log({ session, token });
             if (token) {
-                session.user.role = token.role; // Add role to the session
+                // session.user.role = token.role;
+                console.log({ session, token });
             }
             return session;
         },
