@@ -1,12 +1,12 @@
 import { create } from "zustand";
 
-type VenueModal = {
+type LocationModal = {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
 };
 
-export const useVenueModal = create<VenueModal>((set) => ({
+export const useLocationModal = create<LocationModal>((set) => ({
     isOpen: false,
     onOpen: () => set({ isOpen: true }),
     onClose: () => set({ isOpen: false }),

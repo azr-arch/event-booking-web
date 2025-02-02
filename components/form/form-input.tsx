@@ -1,13 +1,14 @@
 import { FormControl, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { HTMLInputTypeAttribute } from "react";
 import { useFormContext, Controller } from "react-hook-form";
 
 interface FormInputProps {
     name: string; // Field name for useForm
     label: string; // Label for the field
     placeholder?: string; // Placeholder for input
-    type?: string; // Type of input (text, number, date, etc.)
+    type?: HTMLInputTypeAttribute; // Type of input (text, number, date, etc.)
     isTextarea?: boolean; // Whether it's a textarea field
     disabled?: boolean; // Whether it's a textarea field
 }

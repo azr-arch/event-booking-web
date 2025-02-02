@@ -1,50 +1,51 @@
 "use server";
 
+import { getCurrentUser } from "@/lib/auth";
 import { prismaDb } from "@/lib/db";
+import { EventFormSchema } from "@/lib/validator";
+import { z } from "zod";
 
 export const createEventAction = async ({
     name,
-    date,
+    startDate,
+    endDate,
     description,
     tickets,
-    venueId,
-}: {
-    name: string;
-    date: Date;
-    description: string;
-    tickets: { name: string; price: number; quantity: number }[];
-    venueId: string;
-}) => {
+    locationId,
+}: z.infer<typeof EventFormSchema>) => {
     let newEvent;
     try {
-        // const user = await currentUser();
-        // if (!user) {
-        //     return { error: "Unauthorized" };
-        // }
-        // const formattedTickets = tickets.map((ticket) => ({
-        //     type: ticket.name,
-        //     price: ticket.price,
-        //     numberOfTickets: ticket.quantity,
-        // }));
-        // newEvent = await prismaDb.event.create({
-        //     data: {
-        //         name,
-        //         date,
-        //         description,
-        //         tickets: {
-        //             createMany: {
-        //                 data: formattedTickets,
-        //             },
-        //         },
-        //         venue: {
-        //             connect: { id: venueId },
-        //         },
-        //     },
-        //     include: {
-        //         tickets: true,
-        //         venue: true,
-        //     },
-        // });
+        const user = await getCurrentUser();
+        if (!user) {
+            return { error: "Unauthorized action" };
+        }
+
+        const formattedTickets = tickets.map((ticket) => ({
+            type: ticket.name,
+            price: ticket.price,
+            quantityAvailable: ticket.quantity,
+            startSaleDate: ticket.startDate,
+            endSaleDate: ticket.endDate,
+        }));
+
+        newEvent = await prismaDb.event.create({
+            data: {
+                title: name,
+                startDate,
+                endDate,
+                description,
+                tickets: {
+                    createMany: {
+                        data: formattedTickets,
+                    },
+                },
+                locationId,
+                creatorId: user.id,
+            },
+            include: {
+                tickets: true,
+            },
+        });
     } catch (error) {
         console.log("error in createEventAction: ", error);
         return { error: "Internal error" };

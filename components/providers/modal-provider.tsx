@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { VenueModal } from "../modals/venue-modal";
+// import { VenueModLocaioal } from "../modals/venue-modal";
 import { Toaster } from "../ui/toaster";
+import { LocationModal } from "../modals/location-modal";
 
 export const ModalProvider = () => {
     const [isMounted, setIsMounted] = useState(false);
@@ -16,7 +17,7 @@ export const ModalProvider = () => {
     return (
         <>
             <Toaster />
-            <VenueModal />
+            <LocationModal />
         </>
     );
 };

@@ -12,19 +12,20 @@ import {
     TableRow,
 } from "@/components/ui/table";
 
-import { useVenueModal } from "@/hooks/use-venue-modal";
-import { useVenues } from "@/hooks/use-venues";
-import { MoreHorizontal, Search } from "lucide-react";
+import { Search } from "lucide-react";
 
-export const VenueList = () => {
-    const { data: venues } = useVenues();
-    const venueModal = useVenueModal();
+import { useLocation } from "@/hooks/use-location";
+import { useLocationModal } from "@/hooks/use-location-modal";
+
+export const LocationList = () => {
+    const { data: locations } = useLocation();
+    const locationModal = useLocationModal();
 
     return (
         <>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
                 <h1 className="text-3xl font-bold">Venues</h1>
-                <Button onClick={venueModal.onOpen}>Add New Event</Button>
+                <Button onClick={locationModal.onOpen}>Add New Event</Button>
             </div>
             <div className="flex items-center space-x-2">
                 <Search className="w-5 h-5 text-gray-500" />
@@ -49,20 +50,14 @@ export const VenueList = () => {
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {venues &&
-                                    venues.map((venue) => (
-                                        <TableRow key={venue.id}>
+                                {locations &&
+                                    locations.map((location) => (
+                                        <TableRow key={location.id}>
                                             <TableCell className="font-medium ">
-                                                {venue.name}
+                                                {location.name}
                                             </TableCell>
-                                            <TableCell>{venue.location}</TableCell>
-                                            <TableCell className="text-right">
-                                                {venue.capacity.toLocaleString()}
-                                            </TableCell>
-                                            <TableCell className="justify-end">
-                                                <Button variant={"ghost"} className="">
-                                                    <MoreHorizontal className="w-4 h-4" />
-                                                </Button>
+                                            <TableCell className="truncate ">
+                                                {location.address}
                                             </TableCell>
                                         </TableRow>
                                     ))}

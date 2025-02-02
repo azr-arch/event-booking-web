@@ -114,7 +114,7 @@ model Ticket {
   eventId         String @db.ObjectId
   type            String   // e.g. "VIP", "General"
   price           Float
-  quatityAvailable    Int
+  quantityAvailable    Int
   startSaleDate   DateTime
   endSaleDate     DateTime
 

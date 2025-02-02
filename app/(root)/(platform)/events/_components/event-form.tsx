@@ -16,6 +16,13 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
+import { FormInput } from "@/components/form/form-input";
+import { TicketManager } from "./ticket-manager";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
+import { useAction } from "@/hooks/use-action";
+import { createEventAction } from "@/actions/create-event";
+import { useLocation } from "@/hooks/use-location";
 import {
     Select,
     SelectContent,
@@ -23,92 +30,155 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { useState } from "react";
-import { Loader, MapPin, Users } from "lucide-react";
-import { useVenues } from "@/hooks/use-venues";
-import { Venue } from "@prisma/client";
-import { FormInput } from "@/components/form/form-input";
-import { TicketManager } from "./ticket-manager";
-import { Input } from "@/components/ui/input";
-import { useAction } from "@/hooks/use-action";
-import { createEventAction } from "@/actions/create-event";
-import { toast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
+import { useLocationModal } from "@/hooks/use-location-modal";
 
 export const EventForm = () => {
-    const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
-
-    // const { data: venues, isLoading } = useVenues();
+    const { data: locations, isLoading: isLocationLoading } = useLocation();
+    const locationModal = useLocationModal();
 
     const form = useForm<z.infer<typeof EventFormSchema>>({
         resolver: zodResolver(EventFormSchema),
         defaultValues: eventFormDefaultValues,
     });
 
-    // const { execute, isLoading: isFormSubmitting } = useAction(createEventAction, {
-    //     onSuccess: (data) => {
-    //         const { name, date, venue } = data;
-    //         const formattedDate = new Date(date).toLocaleDateString(); // Format the date as needed
+    const { execute, isLoading, errors } = useAction(createEventAction, {
+        onSuccess: (data) => {
+            const { title, startDate } = data;
+            const formattedDate = new Date(startDate).toLocaleDateString(); // Format the date as needed
 
-    //         toast({
-    //             title: `Organized: ${name}`,
-    //             description: `${formattedDate} at ${venue.name}, ${venue.location}`,
-    //         });
-    //     },
-    //     onError: () => {
-    //         toast({ description: "Failed to create." });
-    //     },
-    //     onComplete: () => {
-    //         console.log("Event create done!");
-    //     },
-    // });
+            toast({
+                title: `Organized: ${title}`,
+                description: `Event scheduled at ${formattedDate}`,
+            });
+        },
+        onError: () => {
+            toast({ description: "Failed to create." });
+        },
+        onComplete: () => {
+            console.log("Event create done!");
+        },
+    });
 
-    // const { watch } = form;
-    // const tickets = watch("tickets", []);
+    const { watch } = form;
+    const tickets = watch("tickets", []);
+    const { isSubmitting } = form.formState;
 
-    // function onSubmit(values: z.infer<typeof EventFormSchema>) {
-    //     execute({
-    //         ...values,
-    //     });
-    // }
+    function onSubmit(values: z.infer<typeof EventFormSchema>) {
+        console.log("submitting....");
+        console.log({ values });
 
-    // TODO add venue's capacity cross check with ticket's quantity
+        execute({
+            ...values,
+        });
+    }
+
+    console.log({ errors, isLoading });
+    console.log(form.formState.errors);
+    console.log({ tickets });
 
     return (
         <Form {...form}>
-            <form className="space-y-8 pb-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <FormInput
-                        name="name"
-                        label="Event Name"
-                        placeholder="Enter event name"
-                        // disabled={isFormSubmitting}
-                    />
-
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-6  ">
+                <div className="flex flex-col items-start gap-6 ">
                     <FormField
                         control={form.control}
-                        name="date"
+                        name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Date</FormLabel>
+                                <FormLabel>Event Name</FormLabel>
                                 <FormControl>
-                                    <Input
-                                        type="date"
-                                        onChange={(e) => field.onChange(new Date(e.target.value))}
-                                        // disabled={isFormSubmitting}
-                                    />
+                                    <Input type="text" {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
 
+                    <div className="flex items-center gap-8">
+                        <FormField
+                            control={form.control}
+                            name="startDate"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Event starts on</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="date"
+                                            onChange={(e) =>
+                                                field.onChange(new Date(e.target.value))
+                                            }
+                                            // disabled={isFormSubmitting}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="endDate"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Event ends on</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="date"
+                                            onChange={(e) =>
+                                                field.onChange(new Date(e.target.value))
+                                            }
+                                            // disabled={isFormSubmitting}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                    </div>
+
                     <FormField
                         control={form.control}
-                        name="venueId"
+                        name="locationId"
                         render={({ field }) => (
                             <FormItem className="space-y-2">
-                                <FormLabel>Venue</FormLabel>
-                                <FormControl></FormControl>
+                                <FormLabel>Location</FormLabel>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a location" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {isLocationLoading && (
+                                            <Loader2 className="w-4 h-4 mx-auto animate-spin py-2" />
+                                        )}
+
+                                        {!locations ||
+                                            (locations.length <= 0 && (
+                                                <span className="text-neutral-400 text-sm pl-2">
+                                                    No locations found!
+                                                </span>
+                                            ))}
+
+                                        {locations &&
+                                            locations.map((location) => (
+                                                <SelectItem
+                                                    key={location.id}
+                                                    value={location.id}
+                                                    className="capitalize truncate"
+                                                >
+                                                    {location.name}
+                                                </SelectItem>
+                                            ))}
+                                        <Button
+                                            className="block text-sm h-7 py-0 w-full mt-2"
+                                            variant={"outline"}
+                                            onClick={locationModal.onOpen}
+                                        >
+                                            Create
+                                        </Button>
+                                    </SelectContent>
+                                </Select>
                                 <FormMessage />
                             </FormItem>
                         )}
@@ -121,10 +191,9 @@ export const EventForm = () => {
                     isTextarea={true} // Textarea field
                     // disabled={isFormSubmitting}
                 />
+
                 <TicketManager />
-                {/* <Button type="submit" disabled={tickets.length === 0 || isFormSubmitting}> */}
-                Create
-                {/* </Button> */}
+                <Button disabled={isSubmitting || isLoading}>Create</Button>
             </form>
         </Form>
     );

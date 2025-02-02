@@ -1,7 +1,8 @@
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
-import { FormInput } from "@/components/form/form-input";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 export const TicketManager = ({ disabled = false }: { disabled?: boolean }) => {
     const { control, watch } = useFormContext();
@@ -17,7 +18,7 @@ export const TicketManager = ({ disabled = false }: { disabled?: boolean }) => {
                 <h3 className="text-lg font-semibold">Tickets</h3>
                 <Button
                     type="button"
-                    onClick={() => append({ name: "", price: 0, quantity: 0 })}
+                    onClick={() => append({ type: "", price: 0 })}
                     variant="outline"
                     disabled={disabled}
                 >
@@ -48,26 +49,74 @@ export const TicketManager = ({ disabled = false }: { disabled?: boolean }) => {
                         </Button>
 
                         {/* Use FormInput for Ticket fields */}
-                        <FormInput
-                            name={`tickets.${index}.name`}
-                            label="Type"
-                            placeholder="e.g., VIP, Regular"
-                            // disabled={disabled}
+                        <FormField
+                            control={control}
+                            name="type"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Ticket Type</FormLabel>
+                                    <FormControl>
+                                        <Input type="text" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
 
-                        <FormInput
-                            name={`tickets.${index}.price`}
-                            label="Price"
-                            type="number"
-                            // disabled={disabled}
+                        <FormField
+                            control={control}
+                            name="price"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Price</FormLabel>
+                                    <FormControl>
+                                        <Input type="text" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
                         />
 
-                        <FormInput
-                            name={`tickets.${index}.quantity`}
-                            label="Quantity"
-                            type="number"
-                            // disabled={disabled}
-                        />
+                        <div className="flex items-center">
+                            <FormField
+                                control={control}
+                                name="startSaleDate"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Ticket sale starts on</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="date"
+                                                onChange={(e) =>
+                                                    field.onChange(new Date(e.target.value))
+                                                }
+                                                // disabled={isFormSubmitting}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={control}
+                                name="endSaleDate"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Ticket sale ends on</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="date"
+                                                onChange={(e) =>
+                                                    field.onChange(new Date(e.target.value))
+                                                }
+                                                // disabled={isFormSubmitting}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
                     </div>
                 ))
             )}
