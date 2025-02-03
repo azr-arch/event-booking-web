@@ -1,15 +1,10 @@
-import { prismaDb } from "@/lib/db";
 import { Events } from "./_components/events";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { getAllEvents } from "@/lib/db-queries";
 
 const EventsPage = async () => {
-    // const data = await prismaDb.event.findMany({
-    //     include: {
-    //         venue: true,
-    //         tickets: true,
-    //     },
-    // });
+    const events = await getAllEvents();
 
     return (
         <section className="container mx-auto p-4 sm:p-6 space-y-6 sm:space-y-8">
@@ -19,7 +14,7 @@ const EventsPage = async () => {
                     <Button>Add New Event</Button>
                 </Link>
             </div>
-            <Events />
+            <Events data={events} />
         </section>
     );
 };

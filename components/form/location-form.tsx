@@ -27,8 +27,9 @@ export const LocationForm = () => {
             onClose();
         },
         onError: (error) => {
-            toast({ title: error });
-            console.log("Venue creating error");
+            if (typeof error === "string") {
+                toast({ title: error });
+            }
         },
     });
 
@@ -74,7 +75,7 @@ export const LocationForm = () => {
 
                 {errors && (
                     <p aria-label="error" className="text-sm font-medium text-red-500 my-4">
-                        {errors}
+                        {typeof errors === "string" && errors}
                     </p>
                 )}
                 <DialogFooter>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { EventFormSchema } from "@/lib/validator";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -16,8 +16,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 
-import { FormInput } from "@/components/form/form-input";
-import { TicketManager } from "./ticket-manager";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/hooks/use-toast";
 import { useAction } from "@/hooks/use-action";
@@ -32,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { useLocationModal } from "@/hooks/use-location-modal";
+import { Textarea } from "@/components/ui/textarea";
 
 export const EventForm = () => {
     const { data: locations, isLoading: isLocationLoading } = useLocation();
@@ -42,7 +41,12 @@ export const EventForm = () => {
         defaultValues: eventFormDefaultValues,
     });
 
-    const { execute, isLoading, errors } = useAction(createEventAction, {
+    const { fields, append, remove } = useFieldArray({
+        control: form.control,
+        name: "tickets",
+    });
+
+    const { execute, isLoading } = useAction(createEventAction, {
         onSuccess: (data) => {
             const { title, startDate } = data;
             const formattedDate = new Date(startDate).toLocaleDateString(); // Format the date as needed
@@ -60,22 +64,20 @@ export const EventForm = () => {
         },
     });
 
-    const { watch } = form;
-    const tickets = watch("tickets", []);
-    const { isSubmitting } = form.formState;
+    const isSubmitting = form.formState.isSubmitting || isLoading;
 
     function onSubmit(values: z.infer<typeof EventFormSchema>) {
-        console.log("submitting....");
-        console.log({ values });
-
         execute({
             ...values,
+            startDate: new Date(values.startDate),
+            endDate: new Date(values.endDate),
+            tickets: values.tickets.map((ticket) => ({
+                ...ticket,
+                startSale: new Date(ticket.startSale),
+                endSale: new Date(ticket.endSale),
+            })),
         });
     }
-
-    console.log({ errors, isLoading });
-    console.log(form.formState.errors);
-    console.log({ tickets });
 
     return (
         <Form {...form}>
@@ -95,6 +97,7 @@ export const EventForm = () => {
                         )}
                     />
 
+                    {/* Event dates */}
                     <div className="flex items-center gap-8">
                         <FormField
                             control={form.control}
@@ -136,6 +139,7 @@ export const EventForm = () => {
                         />
                     </div>
 
+                    {/* Location selection */}
                     <FormField
                         control={form.control}
                         name="locationId"
@@ -149,33 +153,25 @@ export const EventForm = () => {
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        {isLocationLoading && (
-                                            <Loader2 className="w-4 h-4 mx-auto animate-spin py-2" />
-                                        )}
-
-                                        {!locations ||
-                                            (locations.length <= 0 && (
-                                                <span className="text-neutral-400 text-sm pl-2">
-                                                    No locations found!
-                                                </span>
-                                            ))}
-
-                                        {locations &&
+                                        {isLocationLoading ? (
+                                            <Loader2 className="w-4 h-4 mx-auto animate-spin" />
+                                        ) : locations?.length ? (
                                             locations.map((location) => (
-                                                <SelectItem
-                                                    key={location.id}
-                                                    value={location.id}
-                                                    className="capitalize truncate"
-                                                >
+                                                <SelectItem key={location.id} value={location.id}>
                                                     {location.name}
                                                 </SelectItem>
-                                            ))}
+                                            ))
+                                        ) : (
+                                            <div className="p-2 text-center text-muted-foreground">
+                                                No locations found
+                                            </div>
+                                        )}
                                         <Button
-                                            className="block text-sm h-7 py-0 w-full mt-2"
-                                            variant={"outline"}
+                                            variant="ghost"
+                                            className="w-full mt-2"
                                             onClick={locationModal.onOpen}
                                         >
-                                            Create
+                                            Create New Location
                                         </Button>
                                     </SelectContent>
                                 </Select>
@@ -184,16 +180,170 @@ export const EventForm = () => {
                         )}
                     />
                 </div>
-                <FormInput
+                {/* Event Description */}
+                <FormField
+                    control={form.control}
                     name="description"
-                    label="Description"
-                    placeholder="Enter event description"
-                    isTextarea={true} // Textarea field
-                    // disabled={isFormSubmitting}
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Description</FormLabel>
+                            <FormControl>
+                                <Textarea
+                                    {...field}
+                                    placeholder="Describe your event..."
+                                    className="min-h-[100px]"
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
                 />
+                <div className="space-y-4">
+                    <div className="flex justify-between items-center">
+                        <h3 className="text-sm font-medium">Tickets</h3>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() =>
+                                append({
+                                    type: "New Ticket Type",
+                                    price: 0,
+                                    quantity: 0,
+                                    startSale: new Date(),
+                                    endSale: new Date(),
+                                })
+                            }
+                        >
+                            Add Ticket
+                        </Button>
+                    </div>
 
-                <TicketManager />
-                <Button disabled={isSubmitting || isLoading}>Create</Button>
+                    {fields.map((field, index) => (
+                        <div key={field.id} className="space-y-4 border p-4 rounded-lg">
+                            <div className="flex justify-end">
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => remove(index)}
+                                >
+                                    Remove
+                                </Button>
+                            </div>
+
+                            <FormField
+                                control={form.control}
+                                name={`tickets.${index}.type`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Ticket Type</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="text"
+                                                {...field}
+                                                placeholder="Ticket type"
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name={`tickets.${index}.price`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Price</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    {...field}
+                                                    onChange={(e) =>
+                                                        field.onChange(Number(e.target.value))
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name={`tickets.${index}.quantity`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Quantity</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="number"
+                                                    {...field}
+                                                    onChange={(e) =>
+                                                        field.onChange(Number(e.target.value))
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <FormField
+                                    control={form.control}
+                                    name={`tickets.${index}.startSale`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Sale Start</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="datetime-local"
+                                                    {...field}
+                                                    value={field.value.toISOString().slice(0, 16)}
+                                                    onChange={(e) =>
+                                                        field.onChange(new Date(e.target.value))
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={form.control}
+                                    name={`tickets.${index}.endSale`}
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Sale End</FormLabel>
+                                            <FormControl>
+                                                <Input
+                                                    type="datetime-local"
+                                                    {...field}
+                                                    value={field.value.toISOString().slice(0, 16)}
+                                                    onChange={(e) =>
+                                                        field.onChange(new Date(e.target.value))
+                                                    }
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="flex justify-end">
+                    <Button type="submit" disabled={isSubmitting}>
+                        Create Event
+                    </Button>
+                </div>
             </form>
         </Form>
     );

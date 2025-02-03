@@ -42,7 +42,7 @@ export const RegisterForm = () => {
                 setError(res.error);
                 return;
             }
-        } catch (e: never) {
+        } catch (e: any) {
             setError(e.message ?? "Something went wrong");
             console.log(e);
         }

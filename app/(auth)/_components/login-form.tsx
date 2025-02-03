@@ -17,7 +17,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { LoaderCircleIcon, XCircle } from "lucide-react";
+import { XCircle } from "lucide-react";
 import { signInAction } from "@/actions/auth/sign-in";
 import { useState } from "react";
 import Link from "next/link";
@@ -112,11 +112,7 @@ export const LoginForm = () => {
                             )}
 
                             <Button disabled={isSubmitting} type="submit" className="w-full">
-                                {isSubmitting ? (
-                                    <LoaderCircleIcon className="animate-spin" />
-                                ) : (
-                                    "Login"
-                                )}
+                                Login
                             </Button>
 
                             <div className="mt-4 text-center text-sm text-violet-500">

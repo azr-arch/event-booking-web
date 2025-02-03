@@ -12,16 +12,18 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { formatDate } from "@/lib/utils";
-import { Event, Venue } from "@prisma/client";
+import { Event, Location, Ticket, UserEvent } from "@prisma/client";
 import { ChevronRight, Edit, Search } from "lucide-react";
 
 interface EventsProps {
     data: (Event & {
-        venue: Venue;
+        location: Location;
+        attendees: UserEvent[];
+        tickets: Ticket[];
     })[];
 }
 
-export const Events = () => {
+export const Events = ({ data }: EventsProps) => {
     return (
         <>
             <div className="flex items-center space-x-2">
@@ -46,19 +48,25 @@ export const Events = () => {
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Event Name</TableHead>
-                                <TableHead>Date</TableHead>
-                                <TableHead>Venue</TableHead>
+                                <TableHead>Start Date</TableHead>
+                                <TableHead>End Date</TableHead>
+                                <TableHead>Location</TableHead>
                                 <TableHead>Tickets Sold</TableHead>
                                 <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {/* {data.map((event) => (
+                            {data.map((event) => (
                                 <TableRow key={event.id}>
-                                    <TableCell className="font-medium">{event.name}</TableCell>
-                                    <TableCell>{formatDate(event.date)}</TableCell>
-                                    <TableCell>{event.venue.name}</TableCell>
-                                    <TableCell>0 / {event.venue.capacity}</TableCell>
+                                    <TableCell className="font-medium">{event.title}</TableCell>
+                                    <TableCell>{formatDate(event.startDate)}</TableCell>
+                                    <TableCell>{formatDate(event.endDate)}</TableCell>
+
+                                    <TableCell>{event.location.name}</TableCell>
+                                    <TableCell>
+                                        {/* TODO Fix this */}
+                                        {event.attendees.length} / 100
+                                    </TableCell>
                                     <TableCell>
                                         <Button variant="ghost" size="sm">
                                             <Edit className="w-4 h-4 mr-2" />
@@ -69,7 +77,7 @@ export const Events = () => {
                                         </Button>
                                     </TableCell>
                                 </TableRow>
-                            ))} */}
+                            ))}
                         </TableBody>
                     </Table>
                 </CardContent>

@@ -21,11 +21,11 @@ export const createEventAction = async ({
         }
 
         const formattedTickets = tickets.map((ticket) => ({
-            type: ticket.name,
+            type: ticket.type,
             price: ticket.price,
             quantityAvailable: ticket.quantity,
-            startSaleDate: ticket.startDate,
-            endSaleDate: ticket.endDate,
+            startSaleDate: ticket.startSale,
+            endSaleDate: ticket.endSale,
         }));
 
         newEvent = await prismaDb.event.create({

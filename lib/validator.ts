@@ -1,22 +1,21 @@
 import * as z from "zod";
 
 export const TicketFormSchema = z.object({
-    name: z.string().min(1, "Ticket type name is required."),
-    price: z.preprocess(
-        (a) => parseFloat(z.string().parse(a)),
-        z
-            .number({
-                invalid_type_error: "Price must be Number",
-                required_error: "Price is required",
-            })
-            .min(1, { message: "Price must be greater than 0" })
-    ),
+    type: z.string().min(1, "Ticket type name is required."),
+    price: z
+        .number({
+            invalid_type_error: "Price must be Number",
+            required_error: "Price is required",
+        })
+        .min(1, { message: "Price must be more than 1$" })
+        .transform((n) => parseFloat(n.toFixed(2))),
+
     quantity: z
         .number({
             required_error: "Quantity is required.",
         })
         .min(1, { message: "Quantity must be greater than 0." }),
-    startDate: z
+    startSale: z
         .date({
             required_error: "Date is required.",
         })
@@ -24,7 +23,7 @@ export const TicketFormSchema = z.object({
             message: "Date must be in the future.",
         }),
 
-    endDate: z
+    endSale: z
         .date({
             required_error: "Date is required.",
         })
