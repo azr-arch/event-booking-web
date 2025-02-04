@@ -11,7 +11,7 @@ export const LocationModal = () => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="dark:bg-black dark:border-white/20 pb-0">
+            <DialogContent className=" pb-0">
                 <DialogHeader>
                     <DialogTitle>Create New Location</DialogTitle>
                 </DialogHeader>
