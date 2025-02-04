@@ -7,7 +7,7 @@ const DashboardPage = () => {
         <section className="space-y-6">
             <h2 className="text-3xl font-bold">Dashboard</h2>
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                <Card>
+                <Card className="dark:bg-black dark:border-white/20">
                     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                         <CardTitle className="text-sm font-medium">Total Events</CardTitle>
                         <CalendarDays className="w-4 h-4 text-muted-foreground" />
@@ -17,7 +17,7 @@ const DashboardPage = () => {
                         <p className="text-xs text-muted-foreground">+2 from last month</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="dark:bg-black dark:border-white/20">
                     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                         <CardTitle className="text-sm font-medium">Total Bookings</CardTitle>
                         <Users className="w-4 h-4 text-muted-foreground" />
@@ -27,7 +27,7 @@ const DashboardPage = () => {
                         <p className="text-xs text-muted-foreground">+30% from last month</p>
                     </CardContent>
                 </Card>
-                <Card>
+                <Card className="dark:bg-black dark:border-white/20">
                     <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                         <CardTitle className="text-sm font-medium">Revenue</CardTitle>
                         <DollarSign className="w-4 h-4 text-muted-foreground" />
@@ -49,13 +49,13 @@ const DashboardPage = () => {
                     </Link>
                     <Link
                         href="/events"
-                        className="p-4 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors"
+                        className="p-4 bg-secondary dark:bg-black dark:border dark:border-white/20 dark:hover:border-white text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors"
                     >
                         View All Events
                     </Link>
                     <Link
                         href="/events"
-                        className="p-4 bg-secondary text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors"
+                        className="p-4 bg-secondary dark:bg-black dark:border dark:border-white/20 dark:hover:border-white text-secondary-foreground rounded-lg hover:bg-secondary/90 transition-colors"
                     >
                         Manage Bookings
                     </Link>

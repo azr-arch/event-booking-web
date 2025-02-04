@@ -28,9 +28,13 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { CalendarIcon, Eraser, Loader2, PlusCircle } from "lucide-react";
 import { useLocationModal } from "@/hooks/use-location-modal";
 import { Textarea } from "@/components/ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { Calendar } from "@/components/ui/calendar";
+import { Card, CardContent } from "@/components/ui/card";
 
 export const EventForm = () => {
     const { data: locations, isLoading: isLocationLoading } = useLocation();
@@ -55,6 +59,7 @@ export const EventForm = () => {
                 title: `Organized: ${title}`,
                 description: `Event scheduled at ${formattedDate}`,
             });
+            form.reset();
         },
         onError: () => {
             toast({ description: "Failed to create." });
@@ -82,69 +87,111 @@ export const EventForm = () => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 pb-6  ">
-                <div className="flex flex-col items-start gap-6 ">
+                <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Event Name</FormLabel>
+                            <FormControl>
+                                <Input placeholder="Enter event name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <FormField
                         control={form.control}
-                        name="name"
+                        name="endDate"
                         render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Event Name</FormLabel>
-                                <FormControl>
-                                    <Input type="text" {...field} />
-                                </FormControl>
+                            <FormItem className="flex flex-col">
+                                <FormLabel>End Date</FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-full pl-3 text-left font-normal",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                            >
+                                                {field.value ? (
+                                                    field.value.toLocaleDateString()
+                                                ) : (
+                                                    <span>Pick a date</span>
+                                                )}
+                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={field.onChange}
+                                            disabled={(date) =>
+                                                date < new Date() ||
+                                                date < form.getValues("startDate")
+                                            }
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="startDate"
+                        render={({ field }) => (
+                            <FormItem className="flex flex-col">
+                                <FormLabel>Start Date</FormLabel>
+                                <Popover>
+                                    <PopoverTrigger asChild>
+                                        <FormControl>
+                                            <Button
+                                                variant={"outline"}
+                                                className={cn(
+                                                    "w-full pl-3 text-left font-normal",
+                                                    !field.value && "text-muted-foreground"
+                                                )}
+                                            >
+                                                {field.value ? (
+                                                    field.value.toLocaleDateString()
+                                                ) : (
+                                                    <span>Pick a date</span>
+                                                )}
+                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                            </Button>
+                                        </FormControl>
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={field.value}
+                                            onSelect={field.onChange}
+                                            disabled={(date) =>
+                                                date < new Date() ||
+                                                date > form.getValues("endDate")
+                                            }
+                                            initialFocus
+                                        />
+                                    </PopoverContent>
+                                </Popover>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
 
-                    {/* Event dates */}
-                    <div className="flex items-center gap-8">
-                        <FormField
-                            control={form.control}
-                            name="startDate"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Event starts on</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="date"
-                                            onChange={(e) =>
-                                                field.onChange(new Date(e.target.value))
-                                            }
-                                            // disabled={isFormSubmitting}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="endDate"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Event ends on</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            type="date"
-                                            onChange={(e) =>
-                                                field.onChange(new Date(e.target.value))
-                                            }
-                                            // disabled={isFormSubmitting}
-                                        />
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )}
-                        />
-                    </div>
-
-                    {/* Location selection */}
                     <FormField
                         control={form.control}
                         name="locationId"
                         render={({ field }) => (
-                            <FormItem className="space-y-2">
+                            <FormItem className="flex flex-col">
                                 <FormLabel>Location</FormLabel>
                                 <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
@@ -154,7 +201,7 @@ export const EventForm = () => {
                                     </FormControl>
                                     <SelectContent>
                                         {isLocationLoading ? (
-                                            <Loader2 className="w-4 h-4 mx-auto animate-spin" />
+                                            <Loader2 className="w-4 h-4 mx-auto animate-spin py-1" />
                                         ) : locations?.length ? (
                                             locations.map((location) => (
                                                 <SelectItem key={location.id} value={location.id}>
@@ -162,10 +209,11 @@ export const EventForm = () => {
                                                 </SelectItem>
                                             ))
                                         ) : (
-                                            <div className="p-2 text-center text-muted-foreground">
-                                                No locations found
-                                            </div>
+                                            <p className="p-2 text-center text-muted-foreground">
+                                                Locations found
+                                            </p>
                                         )}
+
                                         <Button
                                             variant="ghost"
                                             className="w-full mt-2"
@@ -180,6 +228,7 @@ export const EventForm = () => {
                         )}
                     />
                 </div>
+
                 {/* Event Description */}
                 <FormField
                     control={form.control}
@@ -189,154 +238,214 @@ export const EventForm = () => {
                             <FormLabel>Description</FormLabel>
                             <FormControl>
                                 <Textarea
+                                    placeholder="Enter event description"
+                                    className="resize-none"
                                     {...field}
-                                    placeholder="Describe your event..."
-                                    className="min-h-[100px]"
                                 />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}
                 />
-                <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                        <h3 className="text-sm font-medium">Tickets</h3>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            size="sm"
-                            onClick={() =>
-                                append({
-                                    type: "New Ticket Type",
-                                    price: 0,
-                                    quantity: 0,
-                                    startSale: new Date(),
-                                    endSale: new Date(),
-                                })
-                            }
-                        >
-                            Add Ticket
-                        </Button>
-                    </div>
-
+                <div>
+                    <h3 className="text-lg font-semibold mb-4">Tickets</h3>
                     {fields.map((field, index) => (
-                        <div key={field.id} className="space-y-4 border p-4 rounded-lg">
-                            <div className="flex justify-end">
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => remove(index)}
-                                >
-                                    Remove
-                                </Button>
-                            </div>
+                        <Card key={field.id} className="mb-4 dark:bg-black dark:border-white/20">
+                            <CardContent className="pt-6">
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <FormField
+                                        control={form.control}
+                                        name={`tickets.${index}.type`}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Ticket Type</FormLabel>
+                                                <FormControl>
+                                                    <Input {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name={`tickets.${index}.price`}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Price</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        {...field}
+                                                        onChange={(e) =>
+                                                            field.onChange(
+                                                                Number.parseFloat(e.target.value)
+                                                            )
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name={`tickets.${index}.quantity`}
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Quantity</FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        type="number"
+                                                        {...field}
+                                                        onChange={(e) =>
+                                                            field.onChange(
+                                                                Number.parseInt(e.target.value)
+                                                            )
+                                                        }
+                                                    />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
 
-                            <FormField
-                                control={form.control}
-                                name={`tickets.${index}.type`}
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Ticket Type</FormLabel>
-                                        <FormControl>
-                                            <Input
-                                                type="text"
-                                                {...field}
-                                                placeholder="Ticket type"
-                                            />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
+                                    <FormField
+                                        control={form.control}
+                                        name={`tickets.${index}.endSale`}
+                                        render={({ field }) => (
+                                            <FormItem className="flex flex-col">
+                                                <FormLabel>Sale End</FormLabel>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <FormControl>
+                                                            <Button
+                                                                variant={"outline"}
+                                                                className={cn(
+                                                                    "w-full pl-3 text-left font-normal",
+                                                                    !field.value &&
+                                                                        "text-muted-foreground"
+                                                                )}
+                                                            >
+                                                                {form.getValues(`startDate`) ? (
+                                                                    form
+                                                                        .getValues("startDate")
+                                                                        .toLocaleDateString()
+                                                                ) : field.value ? (
+                                                                    field.value.toLocaleDateString()
+                                                                ) : (
+                                                                    <span>Pick a date</span>
+                                                                )}
+                                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                            </Button>
+                                                        </FormControl>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent
+                                                        className="w-auto p-0"
+                                                        align="start"
+                                                    >
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={field.value}
+                                                            onSelect={field.onChange}
+                                                            disabled={(date) =>
+                                                                date < new Date() ||
+                                                                date <
+                                                                    form.getValues(
+                                                                        `tickets.${index}.endSale`
+                                                                    ) ||
+                                                                date > form.getValues("startDate")
+                                                            }
+                                                            initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name={`tickets.${index}.startSale`}
+                                        render={({ field }) => (
+                                            <FormItem className="flex flex-col">
+                                                <FormLabel>Sale Start</FormLabel>
+                                                <Popover>
+                                                    <PopoverTrigger asChild>
+                                                        <FormControl>
+                                                            <Button
+                                                                variant={"outline"}
+                                                                className={cn(
+                                                                    "w-full pl-3 text-left font-normal",
+                                                                    !field.value &&
+                                                                        "text-muted-foreground"
+                                                                )}
+                                                            >
+                                                                {field.value ? (
+                                                                    field.value.toLocaleDateString()
+                                                                ) : (
+                                                                    <span>Pick a date</span>
+                                                                )}
+                                                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                            </Button>
+                                                        </FormControl>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent
+                                                        className="w-auto p-0"
+                                                        align="start"
+                                                    >
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={field.value}
+                                                            onSelect={field.onChange}
+                                                            disabled={(date) =>
+                                                                date < new Date() ||
+                                                                date >
+                                                                    form.getValues(
+                                                                        `tickets.${index}.endSale`
+                                                                    )
+                                                            }
+                                                            initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                {fields.length > 1 && (
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        className="mt-4"
+                                        onClick={() => remove(index)}
+                                    >
+                                        <Eraser className="mr-.5 h-4 w-4" />
+                                        Remove Ticket
+                                    </Button>
                                 )}
-                            />
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name={`tickets.${index}.price`}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Price</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    {...field}
-                                                    onChange={(e) =>
-                                                        field.onChange(Number(e.target.value))
-                                                    }
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name={`tickets.${index}.quantity`}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Quantity</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="number"
-                                                    {...field}
-                                                    onChange={(e) =>
-                                                        field.onChange(Number(e.target.value))
-                                                    }
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-2 gap-4">
-                                <FormField
-                                    control={form.control}
-                                    name={`tickets.${index}.startSale`}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Sale Start</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="datetime-local"
-                                                    {...field}
-                                                    value={field.value.toISOString().slice(0, 16)}
-                                                    onChange={(e) =>
-                                                        field.onChange(new Date(e.target.value))
-                                                    }
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={form.control}
-                                    name={`tickets.${index}.endSale`}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Sale End</FormLabel>
-                                            <FormControl>
-                                                <Input
-                                                    type="datetime-local"
-                                                    {...field}
-                                                    value={field.value.toISOString().slice(0, 16)}
-                                                    onChange={(e) =>
-                                                        field.onChange(new Date(e.target.value))
-                                                    }
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
-                        </div>
+                            </CardContent>
+                        </Card>
                     ))}
+                    <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        className="mt-2"
+                        onClick={() =>
+                            append({
+                                type: "",
+                                price: 0,
+                                quantity: 1,
+                                startSale: new Date(),
+                                endSale: new Date(),
+                            })
+                        }
+                    >
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add Ticket
+                    </Button>
                 </div>
 
                 <div className="flex justify-end">

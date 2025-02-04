@@ -36,7 +36,7 @@ export const Events = ({ data }: EventsProps) => {
                 />
             </div>
 
-            <Card>
+            <Card className="dark:bg-black dark:border-white/20">
                 <CardHeader>
                     <CardTitle>Events Overview</CardTitle>
                     <CardDescription>
@@ -46,7 +46,7 @@ export const Events = ({ data }: EventsProps) => {
                 <CardContent>
                     <Table>
                         <TableHeader>
-                            <TableRow>
+                            <TableRow className="dark:border-white/20">
                                 <TableHead>Event Name</TableHead>
                                 <TableHead>Start Date</TableHead>
                                 <TableHead>End Date</TableHead>
@@ -57,7 +57,7 @@ export const Events = ({ data }: EventsProps) => {
                         </TableHeader>
                         <TableBody>
                             {data.map((event) => (
-                                <TableRow key={event.id}>
+                                <TableRow key={event.id} className="dark:border-white/20">
                                     <TableCell className="font-medium">{event.title}</TableCell>
                                     <TableCell>{formatDate(event.startDate)}</TableCell>
                                     <TableCell>{formatDate(event.endDate)}</TableCell>

@@ -15,6 +15,7 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 
 export default function SettingsPage() {
     const [isDirty, setIsDirty] = useState(false);
@@ -39,21 +40,22 @@ export default function SettingsPage() {
             </header>
 
             <Tabs defaultValue="general" className="space-y-4">
-                <TabsList>
+                <TabsList className="dark:bg-neutral-900">
                     <TabsTrigger value="general">General</TabsTrigger>
                     <TabsTrigger value="notifications">Notifications</TabsTrigger>
                     <TabsTrigger value="security">Security</TabsTrigger>
                     <TabsTrigger value="appearance">Appearance</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="general">
-                    <Card>
+                <TabsContent value="general" className="">
+                    <Card className="">
                         <CardHeader>
                             <CardTitle>General Settings</CardTitle>
                             <CardDescription>
                                 Manage your general application settings
                             </CardDescription>
                         </CardHeader>
+                        <DropdownMenuSeparator className="mb-4" />
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="site-name">Site Name</Label>
@@ -96,6 +98,8 @@ export default function SettingsPage() {
                             <CardTitle>Notification Settings</CardTitle>
                             <CardDescription>Manage how you receive notifications</CardDescription>
                         </CardHeader>
+                        <DropdownMenuSeparator className="mb-4" />
+
                         <CardContent className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <div className="space-y-0.5">
@@ -127,6 +131,8 @@ export default function SettingsPage() {
                                 Manage your account&apos;s security settings
                             </CardDescription>
                         </CardHeader>
+                        <DropdownMenuSeparator className="mb-4" />
+
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="current-password">Current Password</Label>
@@ -169,6 +175,8 @@ export default function SettingsPage() {
                                 Customize the look and feel of your application
                             </CardDescription>
                         </CardHeader>
+                        <DropdownMenuSeparator className="mb-4" />
+
                         <CardContent className="space-y-4">
                             <div className="space-y-2">
                                 <Label htmlFor="theme">Theme</Label>
