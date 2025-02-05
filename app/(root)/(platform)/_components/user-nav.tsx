@@ -23,7 +23,7 @@ const UserNav = () => {
     return (
         <div className="ml-auto">
             <DropdownMenu>
-                <DropdownMenuTrigger className=" focus-visible:outline-none">
+                <DropdownMenuTrigger className=" focus-visible:outline-none" asChild>
                     <Button className="rounded-full" size={"icon"}>
                         <UserIcon className="w-4 h-4" />
                     </Button>

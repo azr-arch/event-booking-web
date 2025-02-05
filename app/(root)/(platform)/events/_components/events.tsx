@@ -11,16 +11,13 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { useEditEventModal } from "@/hooks/use-edit-event-modal";
+import { FullEvent } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
-import { Event, Location, Ticket, UserEvent } from "@prisma/client";
 import { ChevronRight, Edit, Search } from "lucide-react";
 
 interface EventsProps {
-    data: (Event & {
-        location: Location;
-        attendees: UserEvent[];
-        tickets: Ticket[];
-    })[];
+    data: FullEvent[];
 }
 
 export const Events = ({ data }: EventsProps) => {
@@ -57,31 +54,39 @@ export const Events = ({ data }: EventsProps) => {
                         </TableHeader>
                         <TableBody>
                             {data.map((event) => (
-                                <TableRow key={event.id} className="dark:border-white/20">
-                                    <TableCell className="font-medium">{event.title}</TableCell>
-                                    <TableCell>{formatDate(event.startDate)}</TableCell>
-                                    <TableCell>{formatDate(event.endDate)}</TableCell>
-
-                                    <TableCell>{event.location.name}</TableCell>
-                                    <TableCell>
-                                        {/* TODO Fix this */}
-                                        {event.attendees.length} / 100
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button variant="ghost" size="sm">
-                                            <Edit className="w-4 h-4 mr-2" />
-                                            Edit
-                                        </Button>
-                                        <Button variant="ghost" size="sm">
-                                            <ChevronRight className="w-4 h-4" />
-                                        </Button>
-                                    </TableCell>
-                                </TableRow>
+                                <EventRow key={event.id} event={event} />
                             ))}
                         </TableBody>
                     </Table>
                 </CardContent>
             </Card>
         </>
+    );
+};
+
+const EventRow = ({ event }: { event: FullEvent }) => {
+    const { onOpen } = useEditEventModal();
+
+    return (
+        <TableRow key={event.id} className="dark:border-white/20">
+            <TableCell className="font-medium">{event.title}</TableCell>
+            <TableCell>{formatDate(event.startDate)}</TableCell>
+            <TableCell>{formatDate(event.endDate)}</TableCell>
+
+            <TableCell>{event.location.name}</TableCell>
+            <TableCell>
+                {/* TODO Fix this */}
+                {event.attendees.length} / 100
+            </TableCell>
+            <TableCell>
+                <Button onClick={() => onOpen(event.id)} variant="ghost" size="sm">
+                    <Edit className="w-4 h-4 mr-2" />
+                    Edit
+                </Button>
+                <Button variant="ghost" size="sm">
+                    <ChevronRight className="w-4 h-4" />
+                </Button>
+            </TableCell>
+        </TableRow>
     );
 };

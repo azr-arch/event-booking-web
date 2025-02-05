@@ -10,7 +10,7 @@ export function cn(...inputs: ClassValue[]) {
 
 export const formatDate = (dateString: Date) => {
     const date = new Date(dateString);
-    const options = { day: "numeric", month: "long", year: "numeric" };
+    const options: Intl.DateTimeFormatOptions = { day: "numeric", month: "short", year: "numeric" };
     return date.toLocaleDateString("en-US", options);
 };
 

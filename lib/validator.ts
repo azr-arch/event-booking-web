@@ -62,6 +62,36 @@ export const EventFormSchema = z.object({
     tickets: z.array(TicketFormSchema).min(1, { message: "There must be at least one ticket." }),
 });
 
+export const UpdateEventFormSchema = z.object({
+    id: z.string(),
+    creatorId: z.string(),
+    name: z.string().min(3, { message: "Event name must be at least 3 characters." }),
+    description: z
+        .string()
+        .min(3, { message: "Event description must be at least 3 characters." })
+        .max(400, "Event description must be less than 400 characters."),
+    startDate: z
+        .date({
+            required_error: "Date is required.",
+        })
+        .refine((date) => date >= new Date(), {
+            message: "Date must be in the future.",
+        }),
+    endDate: z
+        .date({
+            required_error: "Date is required.",
+        })
+        .refine((date) => date >= new Date(), {
+            message: "Date must be in the future.",
+        }),
+    locationId: z.string({
+        required_error: "Please select event's location",
+    }),
+    image: z.string().optional(),
+    // Tickets array must have at least one ticket
+    tickets: z.array(TicketFormSchema).min(1, { message: "There must be at least one ticket." }),
+});
+
 export const LocationFormSchema = z.object({
     name: z
         .string({ required_error: "Location name should not be empty." })
