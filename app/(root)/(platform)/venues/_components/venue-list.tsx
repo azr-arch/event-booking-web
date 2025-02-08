@@ -63,11 +63,9 @@ function LocationItem({ location }: { location: Location }) {
             toast({ title: "Deleted successfully!" });
         },
         onError: (err) => {
-            if (typeof err === "string") {
-                toast({ description: err });
-            } else if (err && err.title && err.description) {
-                toast({ title: err.title, description: err.description });
-            }
+            toast({
+                description: err,
+            });
         },
         onComplete: () => {
             refetch();

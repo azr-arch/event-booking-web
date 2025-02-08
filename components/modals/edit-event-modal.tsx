@@ -27,7 +27,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { cn } from "@/lib/utils";
+import { cn, deepEqual } from "@/lib/utils";
 import { useEditEventModal } from "@/hooks/use-edit-event-modal";
 import { DropdownMenuSeparator } from "../ui/dropdown-menu";
 import { UpdateEventFormSchema } from "@/lib/validator";
@@ -38,6 +38,7 @@ import { fetcher } from "@/lib/fetcher";
 import { useEffect } from "react";
 import { useLocation } from "@/hooks/use-location";
 import { useLocationModal } from "@/hooks/use-location-modal";
+import { toast } from "@/hooks/use-toast";
 
 type EventFormValues = z.infer<typeof UpdateEventFormSchema>;
 
@@ -66,7 +67,14 @@ export function EditEventModal() {
         if (eventData) {
             reset({
                 ...eventData,
+                startDate: new Date(eventData.startDate),
+                endDate: new Date(eventData.endDate),
                 locationId: eventData.locationId,
+                tickets: eventData.tickets.map((ticket) => ({
+                    ...ticket,
+                    startSale: new Date(ticket.startSale),
+                    endSale: new Date(ticket.endSale),
+                })),
             }); // Update the form's default values when eventData changes
         }
     }, [eventData, reset]);
@@ -76,24 +84,56 @@ export function EditEventModal() {
         name: "tickets",
     });
 
-    const { execute } = useAction(updateEventAction, {
-        onSuccess: () => {},
-        onError: () => {},
+    const { execute, isLoading } = useAction(updateEventAction, {
+        onSuccess: () => {
+            toast({
+                title: "Updated",
+                description: `Event got successfully updated.`,
+            });
+
+            onClose();
+        },
+        onError: (err) => {
+            toast({
+                title: "Something went wrong.",
+                description: err,
+            });
+        },
     });
 
     function onSubmit(values: EventFormValues) {
+        const equal = isEqual();
+
+        if (equal) {
+            toast({
+                description: "No changes made",
+            });
+            return;
+        }
+
         execute({
             ...values,
+            startDate: new Date(values.startDate),
+            endDate: new Date(values.endDate),
+            tickets: values.tickets.map((ticket) => ({
+                ...ticket,
+                startSale: new Date(ticket.startSale),
+                endSale: new Date(ticket.endSale),
+            })),
         });
-        onClose();
     }
 
-    const selectedLocation =
-        locations?.find((item) => item.id === eventData?.locationId)?.name || "";
+    function isEqual() {
+        const newValues = form.getValues();
+
+        if (eventData) {
+            return deepEqual(newValues, eventData!);
+        }
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto">
+            <DialogContent className="sm:max-w-[625px] max-h-[90vh] overflow-y-auto mb-0">
                 <DialogHeader>
                     <DialogTitle>Edit Event</DialogTitle>
                 </DialogHeader>
@@ -104,7 +144,7 @@ export function EditEventModal() {
                     </div>
                 ) : (
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-8">
                             <input type="hidden" name="id" value={eventData.id} />
                             <input type="hidden" name="creatorId" value={eventData.creatorId} />
 
@@ -162,6 +202,7 @@ export function EditEventModal() {
                                                         selected={field.value}
                                                         onSelect={field.onChange}
                                                         disabled={(date) =>
+                                                            date < new Date() ||
                                                             date > form.getValues("endDate")
                                                         }
                                                         initialFocus
@@ -212,6 +253,7 @@ export function EditEventModal() {
                                                         selected={field.value}
                                                         onSelect={field.onChange}
                                                         disabled={(date) =>
+                                                            date < new Date() ||
                                                             date < form.getValues("startDate")
                                                         }
                                                         initialFocus
@@ -225,7 +267,6 @@ export function EditEventModal() {
                             </div>
 
                             <FormField
-                                // defaultValue={eventData.locationId}
                                 control={form.control}
                                 name="locationId"
                                 render={({ field }) => (
@@ -233,7 +274,7 @@ export function EditEventModal() {
                                         <FormLabel>Location</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            defaultValue={selectedLocation}
+                                            defaultValue={eventData.locationId}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
@@ -273,7 +314,6 @@ export function EditEventModal() {
                             />
 
                             <FormField
-                                // defaultValue={eventData.description}
                                 control={form.control}
                                 name="description"
                                 render={({ field }) => (
@@ -297,6 +337,15 @@ export function EditEventModal() {
                                     <Card key={field.id} className="mb-4">
                                         <CardContent className="pt-6">
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                {/* Adding ticket id */}
+                                                {field.id && (
+                                                    <input
+                                                        type="hidden"
+                                                        name={`tickets.${index}.id`}
+                                                        value={field.id}
+                                                    />
+                                                )}
+
                                                 <FormField
                                                     // defaultValue={eventData.tickets[index].type}
                                                     control={form.control}
@@ -403,10 +452,11 @@ export function EditEventModal() {
                                                                         selected={field.value}
                                                                         onSelect={field.onChange}
                                                                         disabled={(date) =>
+                                                                            date < new Date() ||
                                                                             date >
-                                                                            form.getValues(
-                                                                                `tickets.${index}.endSale`
-                                                                            )
+                                                                                form.getValues(
+                                                                                    `tickets.${index}.endSale`
+                                                                                )
                                                                         }
                                                                         initialFocus
                                                                     />
@@ -461,10 +511,15 @@ export function EditEventModal() {
                                                                         selected={field.value}
                                                                         onSelect={field.onChange}
                                                                         disabled={(date) =>
+                                                                            date < new Date() ||
+                                                                            date >
+                                                                                form.getValues(
+                                                                                    "endDate"
+                                                                                ) ||
                                                                             date <
-                                                                            form.getValues(
-                                                                                `tickets.${index}.startSale`
-                                                                            )
+                                                                                form.getValues(
+                                                                                    `tickets.${index}.startSale`
+                                                                                )
                                                                         }
                                                                         initialFocus
                                                                     />
@@ -510,7 +565,9 @@ export function EditEventModal() {
                                 </Button>
                             </div>
 
-                            <Button type="submit">Save Changes</Button>
+                            <Button disabled={isLoading} type="submit">
+                                Save Changes
+                            </Button>
                         </form>
                     </Form>
                 )}
