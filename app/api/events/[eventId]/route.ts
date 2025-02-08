@@ -22,6 +22,7 @@ export async function GET(req: Request, { params }: { params: { eventId: string 
                 },
                 tickets: {
                     select: {
+                        id: true,
                         type: true,
                         price: true,
                         quantityAvailable: true,
@@ -33,7 +34,7 @@ export async function GET(req: Request, { params }: { params: { eventId: string 
         });
 
         if (!event) {
-            return new NextResponse("Not found", { status: 404 });
+            return new NextResponse("Event not found!", { status: 404 });
         }
 
         const data = {

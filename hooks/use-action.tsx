@@ -1,12 +1,10 @@
 import { useState, useCallback } from "react";
 
-type Action<TInput, TOutput> = (
-    data: TInput
-) => Promise<{ data?: TOutput; error?: string | { title: string; description: string } }>;
+type Action<TInput, TOutput> = (data: TInput) => Promise<{ data?: TOutput; error?: string }>;
 
 interface UseActionOptions<TOutput> {
     onSuccess?: (data: TOutput) => void;
-    onError?: (error: string | { title: string; description: string }) => void;
+    onError?: (error: string) => void;
     onComplete?: () => void;
 }
 
@@ -14,9 +12,7 @@ export const useAction = <TInput, TOutput>(
     action: Action<TInput, TOutput>,
     options: UseActionOptions<TOutput> = {}
 ) => {
-    const [errors, setErrors] = useState<
-        string | { title: string; description: string } | undefined
-    >();
+    const [errors, setErrors] = useState<string | undefined>();
     const [data, setData] = useState<TOutput | undefined>();
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -26,8 +22,6 @@ export const useAction = <TInput, TOutput>(
             setErrors(undefined); // Reset errors
             try {
                 const result = await action(input); // Execute the action
-                console.log({ result });
-
                 if (result?.error) {
                     setErrors(result.error);
                     options.onError?.(result.error); // Trigger onError callback
