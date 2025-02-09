@@ -20,11 +20,7 @@ export const deleteLocationAction = async ({ locationId }: { locationId: string 
         // Check if lcation has any upcoming events
         if (hasEvents) {
             return {
-                error: {
-                    title: "Failed to delete",
-                    description:
-                        "Upcoming events are scheduled at this location. Please cancel or reschedule them before deleting the location.",
-                },
+                error: "Upcoming events are scheduled at this location. Please cancel or reschedule them before deleting the location.",
             };
         }
 

@@ -1,6 +1,7 @@
 import * as z from "zod";
 
 export const TicketFormSchema = z.object({
+    id: z.optional(z.string()),
     type: z.string().min(1, "Ticket type name is required."),
     price: z
         .number({

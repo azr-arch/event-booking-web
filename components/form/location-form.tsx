@@ -27,9 +27,7 @@ export const LocationForm = () => {
             onClose();
         },
         onError: (error) => {
-            if (typeof error === "string") {
-                toast({ title: error });
-            }
+            toast({ title: error });
         },
     });
 
