@@ -15,6 +15,7 @@ import { useEditEventModal } from "@/hooks/use-edit-event-modal";
 import { FullEvent } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { ChevronRight, Edit, Search } from "lucide-react";
+import Link from "next/link";
 
 interface EventsProps {
     data: FullEvent[];
@@ -69,7 +70,11 @@ const EventRow = ({ event }: { event: FullEvent }) => {
 
     return (
         <TableRow key={event.id} className="dark:border-white/20">
-            <TableCell className="font-medium">{event.title}</TableCell>
+            <TableCell className="font-medium">
+                <Link href={`events/${event.id}`} className="hover:underline">
+                    {event.title}
+                </Link>
+            </TableCell>
             <TableCell>{formatDate(event.startDate)}</TableCell>
             <TableCell>{formatDate(event.endDate)}</TableCell>
 

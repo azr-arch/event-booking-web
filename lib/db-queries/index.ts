@@ -24,3 +24,28 @@ export async function getAllEvents() {
         return [];
     }
 }
+
+export async function getEvent({ id }: { id: string }) {
+    try {
+        const currUser = await auth();
+        if (!currUser) {
+            return null;
+        }
+        const event = await prismaDb.event.findUnique({
+            where: {
+                id,
+            },
+            include: {
+                tickets: true,
+                attendees: true,
+                location: true,
+                orders: true,
+            },
+        });
+
+        return event;
+    } catch (e) {
+        console.log("[QUERY_GET_EVENT]: ", e);
+        return null;
+    }
+}
