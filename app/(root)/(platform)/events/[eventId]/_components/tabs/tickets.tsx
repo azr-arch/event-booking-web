@@ -11,10 +11,11 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import SalesOverviewCard from "./overview";
+import { Ticket } from "@prisma/client";
 
-const TicketsTab = () => {
+const TicketsTab = ({ tickets }: { tickets: Ticket[] }) => {
     //   const totalSold = tickets.reduce((acc, ticket) => acc + ticket.sold, 0);
-    //   const totalAvailable = tickets.reduce((acc, ticket) => acc + ticket.available, 0);
+    const totalAvailable = tickets.reduce((acc, ticket) => acc + ticket.quantityAvailable, 0);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -34,20 +35,23 @@ const TicketsTab = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {/* {tickets.map((ticket) => (
-                <TableRow key={ticket.type}>
-                  <TableCell className="font-medium">{ticket.type}</TableCell>
-                  <TableCell>${ticket.price}</TableCell>
-                  <TableCell>{ticket.sold}</TableCell>
-                  <TableCell>{ticket.available}</TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="sm">
-                      <Edit className="w-4 h-4 mr-2" />
-                      Edit
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))} */}
+                            {tickets.length <= 0 && (
+                                <p className="text-neutral-400 p-4">No tickets has been sold</p>
+                            )}
+                            {tickets.map((ticket) => (
+                                <TableRow key={ticket.type}>
+                                    <TableCell className="font-medium">{ticket.type}</TableCell>
+                                    <TableCell>${ticket.price}</TableCell>
+                                    <TableCell>0</TableCell>
+                                    <TableCell>{totalAvailable}</TableCell>
+                                    <TableCell>
+                                        <Button variant="ghost" size="sm">
+                                            <Edit className="w-4 h-4 mr-2" />
+                                            Edit
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
                         </TableBody>
                     </Table>
                 </CardContent>

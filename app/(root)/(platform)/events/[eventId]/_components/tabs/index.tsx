@@ -27,8 +27,8 @@ const EventTabs = ({ event }: { event: EventWithOrder }) => {
             </TabsContent>
             <TabsContent value="tickets">
                 <TicketsTab
-                // tickets={event.tickets}
-                //  totalSales={event.totalSales}
+                    tickets={event.tickets}
+                    //  totalSales={event.totalSales}
                 />
             </TabsContent>
             <TabsContent value="logs">
