@@ -23,9 +23,7 @@ const EventTabs = ({ event }: { event: EventWithOrder }) => {
                 <EventDetailsTab event={event} />
             </TabsContent>
             <TabsContent value="attendees">
-                <AttendeesTab
-                //  attendees={event.attendees}
-                />
+                <AttendeesTab attendees={event.attendees} />
             </TabsContent>
             <TabsContent value="tickets">
                 <TicketsTab
