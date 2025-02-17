@@ -19,7 +19,6 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useEditEventModal } from "@/hooks/use-edit-event-modal";
 import { FullEvent } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
@@ -84,14 +83,14 @@ const EventRow = ({ event }: { event: FullEvent }) => {
     // }
 
     return (
-        <TableRow key={event.id} className="dark:border-white/20">
-            <TableCell className="font-medium">
+        <TableRow key={event.id} className="dark:border-white/20 shrink-0">
+            <TableCell className="font-medium min-w-[100px]">
                 <Link href={`events/${event.id}`} className="hover:underline">
                     {event.title}
                 </Link>
             </TableCell>
-            <TableCell>{formatDate(event.startDate)}</TableCell>
-            <TableCell>{formatDate(event.endDate)}</TableCell>
+            <TableCell className="min-w-[100px]">{formatDate(event.startDate)}</TableCell>
+            <TableCell className="min-w-[100px]">{formatDate(event.endDate)}</TableCell>
 
             <TableCell>{event.location.name}</TableCell>
             <TableCell>
