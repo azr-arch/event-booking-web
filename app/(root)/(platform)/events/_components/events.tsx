@@ -2,6 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
     Table,
@@ -11,10 +19,11 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useEditEventModal } from "@/hooks/use-edit-event-modal";
 import { FullEvent } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
-import { ChevronRight, Edit, Search } from "lucide-react";
+import { ChevronRight, Edit, Search, Trash } from "lucide-react";
 import Link from "next/link";
 
 interface EventsProps {
@@ -67,6 +76,12 @@ export const Events = ({ data }: EventsProps) => {
 
 const EventRow = ({ event }: { event: FullEvent }) => {
     const { onOpen } = useEditEventModal();
+    // const {onOpen: openConfirmModal} = useConfirmModal()
+
+    // TODO need clarification
+    // const onDelete = () => {
+
+    // }
 
     return (
         <TableRow key={event.id} className="dark:border-white/20">
@@ -88,9 +103,21 @@ const EventRow = ({ event }: { event: FullEvent }) => {
                     <Edit className="w-4 h-4 mr-2" />
                     Edit
                 </Button>
-                <Button variant="ghost" size="sm">
-                    <ChevronRight className="w-4 h-4" />
-                </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <Button variant="ghost" size="sm">
+                            <ChevronRight className="w-4 h-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>Action</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem className="dark:bg-black dark:hover:bg-white/10">
+                            <Trash className="w-4 h-4" />
+                            Delete
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </TableCell>
         </TableRow>
     );

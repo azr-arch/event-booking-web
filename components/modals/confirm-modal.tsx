@@ -15,12 +15,11 @@ import { useEffect, useState } from "react";
 interface ConfirmModalProps {
     title: string;
     description?: string;
-    onConfirm: () => void;
 }
 
-export const ConfirmModal = ({ title, description, onConfirm }: ConfirmModalProps) => {
+export const ConfirmModal = ({ title, description }: ConfirmModalProps) => {
     const [isMounted, setIsMounted] = useState(false);
-    const { isOpen, onClose } = useConfirmModal();
+    const { isOpen, onClose, confirmFn } = useConfirmModal();
 
     useEffect(() => {
         setIsMounted(true);
@@ -37,11 +36,13 @@ export const ConfirmModal = ({ title, description, onConfirm }: ConfirmModalProp
                 </DialogHeader>
                 <DialogFooter>
                     <Button onClick={onClose} variant={"outline"}>
-                        Cancel
+                        Close
                     </Button>
-                    <Button onClick={onConfirm} variant={"default"}>
-                        Confirm
-                    </Button>
+                    {confirmFn && (
+                        <Button onClick={confirmFn} variant={"default"}>
+                            Confirm
+                        </Button>
+                    )}
                 </DialogFooter>
             </DialogContent>
         </Dialog>

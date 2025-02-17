@@ -2,12 +2,14 @@ import { create } from "zustand";
 
 type ConfirmModal = {
     isOpen: boolean;
-    onOpen: () => void;
+    onOpen: (confirmFn: () => void) => void;
     onClose: () => void;
+    confirmFn?: () => void;
 };
 
 export const useConfirmModal = create<ConfirmModal>((set) => ({
+    confirmFn: undefined,
     isOpen: false,
-    onOpen: () => set({ isOpen: true }),
-    onClose: () => set({ isOpen: false }),
+    onOpen: (confirmFn: () => void) => set({ isOpen: true, confirmFn }),
+    onClose: () => set({ isOpen: false, confirmFn: undefined }),
 }));

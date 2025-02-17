@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Toaster } from "../ui/toaster";
 import { LocationModal } from "../modals/location-modal";
 import { EditEventModal } from "../modals/edit-event-modal";
+import { ConfirmModal } from "../modals/confirm-modal";
 
 export const ModalProvider = () => {
     const [isMounted, setIsMounted] = useState(false);
@@ -20,6 +21,7 @@ export const ModalProvider = () => {
             <Toaster />
             <LocationModal />
             <EditEventModal />
+            <ConfirmModal title="Are you sure?" description="this action cannot be revert" />
         </>
     );
 };

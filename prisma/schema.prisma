@@ -110,7 +110,7 @@ model Event {
 
 model Ticket {
   id              String    @id @default(auto()) @map("_id") @db.ObjectId
-  event           Event @relation(fields: [eventId], references: [id])
+  event           Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
   eventId         String @db.ObjectId
   type            String   // e.g. "VIP", "General"
   price           Float
