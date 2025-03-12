@@ -22,7 +22,7 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${fontFira.className} antialiased`}>
-                <ThemeProvider attribute={"class"} defaultTheme="dark" disableTransitionOnChange>
+                <ThemeProvider attribute={"class"} defaultTheme="light" disableTransitionOnChange>
                     {children}
                 </ThemeProvider>
             </body>
