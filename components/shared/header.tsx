@@ -1,16 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarDays, Menu, Search, Ticket, X } from "lucide-react";
+import { CalendarDays, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 
 const navLinks = [
-    { name: "Discover Events", href: "#events", icon: <Search className="h-4 w-4 mr-1" /> },
     { name: "Features", href: "#features", icon: null },
     { name: "How it Works", href: "#how-it-works", icon: null },
-    { name: "Pricing", href: "#pricing", icon: null },
-    { name: "For Organizers", href: "#organizers", icon: <Ticket className="h-4 w-4 mr-1" /> },
+    { name: "FAQs", href: "#faq", icon: null },
 ];
 
 const Header = () => {
@@ -18,7 +16,18 @@ const Header = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     const toggleMobileMenu = () => {
-        setMobileMenuOpen((prev) => !prev);
+        setMobileMenuOpen((prev) => {
+            if (prev) {
+                // Adding scroll to the body
+                document.body.style.overflow = "scroll";
+                return false;
+            } else {
+                // Hiding scroll
+                document.body.style.overflow = "hidden";
+                return true;
+            }
+        });
+        // document.body.style.overflow
     };
 
     useEffect(() => {
@@ -96,9 +105,10 @@ const Header = () => {
                 </nav>
 
                 {/* Mobile Menu */}
+                {/* Use shadcn Sheet component, and extract it into its own component */}
                 <div
                     className={cn(
-                        "fixed inset-0 top-[72px] z-50 bg-white dark:bg-gray-950 md:hidden transform transition-transform duration-300 ease-in-out",
+                        "absolute w-screen  h-screen inset-0 top-[65px] z-50 bg-white dark:bg-gray-950 md:hidden transform transition-transform duration-300 ease-in-out",
                         mobileMenuOpen ? "translate-x-0 opacity-100" : "translate-x-full opacity-0"
                     )}
                 >
@@ -108,7 +118,7 @@ const Header = () => {
                                 <li key={link.name}>
                                     <a
                                         href={link.href}
-                                        className="block py-2 text-lg transition-colors hover:text-primary flex items-center"
+                                        className=" py-2 text-lg transition-colors hover:text-primary flex items-center"
                                         onClick={toggleMobileMenu}
                                     >
                                         {link.icon}

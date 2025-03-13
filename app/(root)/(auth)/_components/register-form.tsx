@@ -42,8 +42,9 @@ export const RegisterForm = () => {
                 setError(res.error);
                 return;
             }
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (e: any) {
-            setError(e.message ?? "Something went wrong");
+            setError(e?.message ?? "Something went wrong");
             console.log(e);
         }
     }

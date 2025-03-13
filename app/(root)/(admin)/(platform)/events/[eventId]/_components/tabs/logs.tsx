@@ -1,13 +1,5 @@
 import React from "react";
-import {
-    Table,
-    TableHeader,
-    TableRow,
-    TableHead,
-    TableBody,
-    TableCell,
-} from "@/components/ui/table";
-import { format } from "date-fns";
+import { Table, TableHeader, TableRow, TableHead, TableBody } from "@/components/ui/table";
 
 const LogsTab = () => {
     return (

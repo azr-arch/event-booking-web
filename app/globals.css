@@ -112,7 +112,11 @@
     }
 
     .text-gradient {
-        @apply bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent;
+        @apply bg-gradient-to-r from-primary to-blue-300 bg-clip-text text-transparent;
+    }
+
+    .text-gradient-b {
+        @apply bg-gradient-to-b from-blue-300 to-primary bg-clip-text text-transparent;
     }
 
     .animated-bg {
