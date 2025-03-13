@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getAllEvents } from "@/lib/db-queries";
 
+export const dynamic = "force-dynamic";
+
 const EventsPage = async () => {
     const events = await getAllEvents();
 
