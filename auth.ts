@@ -40,8 +40,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                         throw new CustomError("No account is registered with given email");
                     }
 
-                    console.log({ user });
-
                     const isPasswordSame = await comparePassword(password as string, user.password);
                     if (!isPasswordSame) {
                         throw new CustomError("Password not match");
