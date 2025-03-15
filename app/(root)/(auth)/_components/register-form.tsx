@@ -53,12 +53,10 @@ export const RegisterForm = () => {
 
     return (
         <div className={cn("flex flex-col gap-6")}>
-            <Card>
+            <Card className="border-0 shadow-none">
                 <CardHeader>
                     <CardTitle className="text-2xl">Create an account</CardTitle>
-                    <CardDescription>
-                        Enter your details below to create your account
-                    </CardDescription>
+                    <CardDescription>Join us to discover and book amazing events</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
@@ -80,11 +78,7 @@ export const RegisterForm = () => {
                                     <FormItem>
                                         <FormLabel>Name</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="text"
-                                                placeholder="Enter your name"
-                                                {...field}
-                                            />
+                                            <Input type="text" placeholder="John doe" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -100,7 +94,7 @@ export const RegisterForm = () => {
                                         <FormControl>
                                             <Input
                                                 type="email"
-                                                placeholder="Enter your email address"
+                                                placeholder="johndoe@example.com"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -118,7 +112,7 @@ export const RegisterForm = () => {
                                         <FormControl>
                                             <Input
                                                 type="password"
-                                                placeholder="Enter password"
+                                                placeholder="••••••••"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -134,7 +128,11 @@ export const RegisterForm = () => {
                                 </div>
                             )}
 
-                            <Button disabled={isSubmitting} type="submit" className="w-full">
+                            <Button
+                                disabled={isSubmitting}
+                                type="submit"
+                                className="w-full rounded-sm"
+                            >
                                 {isSubmitting ? (
                                     <LoaderCircleIcon className="animate-spin" />
                                 ) : (
@@ -142,7 +140,7 @@ export const RegisterForm = () => {
                                 )}
                             </Button>
 
-                            <div className="mt-4 text-center text-sm text-violet-500">
+                            <div className="mt-4 text-center text-sm text-neutral-600">
                                 Have an account?{" "}
                                 <Link href="/sign-in" className="underline underline-offset-4">
                                     Sign In

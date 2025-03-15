@@ -27,14 +27,14 @@ export async function register(values: z.infer<typeof signUpSchema>) {
                 name,
                 email,
                 password: hashedPassword,
-                role: "ORGANIZER",
+                role: "ATTENDEE",
             },
         });
 
         console.log({ createdUser });
 
         // Sign in user
-        await signIn("credentials", { email, password, redirectTo: "/dashboard" });
+        await signIn("credentials", { email, password });
     } catch (e) {
         console.log("[REGISTER_ERR]: ", e);
         if (e instanceof AuthError) {

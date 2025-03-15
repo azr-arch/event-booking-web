@@ -51,12 +51,10 @@ export const LoginForm = () => {
 
     return (
         <div className={cn("flex flex-col gap-6")}>
-            <Card>
-                <CardHeader>
-                    <CardTitle className="text-2xl">Login</CardTitle>
-                    <CardDescription>
-                        Enter your email below to login to your account
-                    </CardDescription>
+            <Card className="border-none shadow-none">
+                <CardHeader className="text-start">
+                    <CardTitle className="text-2xl">Sign in to your account</CardTitle>
+                    <CardDescription>Access your bookings and upcoming events</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
@@ -77,7 +75,7 @@ export const LoginForm = () => {
                                         <FormControl>
                                             <Input
                                                 type="email"
-                                                placeholder="Enter your email address"
+                                                placeholder="johndoe@example.com"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -95,7 +93,7 @@ export const LoginForm = () => {
                                         <FormControl>
                                             <Input
                                                 type="password"
-                                                placeholder="Enter password"
+                                                placeholder="⦁⦁⦁⦁⦁⦁⦁⦁"
                                                 {...field}
                                             />
                                         </FormControl>
@@ -111,11 +109,15 @@ export const LoginForm = () => {
                                 </div>
                             )}
 
-                            <Button disabled={isSubmitting} type="submit" className="w-full">
+                            <Button
+                                disabled={isSubmitting}
+                                type="submit"
+                                className="w-full rounded-sm"
+                            >
                                 Login
                             </Button>
 
-                            <div className="mt-4 text-center text-sm text-violet-500">
+                            <div className="mt-4 text-center text-sm text-neutral-600">
                                 Don&apos;t have an account?{" "}
                                 <Link href="/sign-up" className="underline underline-offset-4">
                                     Sign up

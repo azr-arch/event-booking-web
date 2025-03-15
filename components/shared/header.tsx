@@ -1,9 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CalendarDays, Menu, X } from "lucide-react";
+import { CalendarDays, LogIn, Menu, User, UserPlus, Users, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
+import Link from "next/link";
+import { Logo } from "./logo";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 
 const navLinks = [
     { name: "Features", href: "#features", icon: null },
@@ -48,7 +57,7 @@ const Header = () => {
     return (
         <header
             className={cn(
-                "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 md:px-10",
+                "fixed top-0 left-0 right-0 z-50 transition-all duration-300 py-4 px-6 md:px-8",
                 scrolled
                     ? "bg-white/80 dark:bg-black/80 backdrop-blur-md shadow-sm"
                     : "bg-transparent"
@@ -56,12 +65,7 @@ const Header = () => {
         >
             <div className="container mx-auto">
                 <nav className="flex items-center justify-between">
-                    <div className="flex items-center">
-                        <a href="#" className="flex items-center space-x-2">
-                            <CalendarDays className="h-8 w-8 text-primary" />
-                            <span className="text-xl font-semibold tracking-tight">Eventique</span>
-                        </a>
-                    </div>
+                    <Logo />
 
                     {/* Desktop Navigation */}
                     <div className="hidden md:flex items-center space-x-1">
@@ -80,11 +84,25 @@ const Header = () => {
                         </ul>
                     </div>
 
-                    <div className="hidden md:flex items-center space-x-4">
-                        <Button variant="ghost" size="sm">
-                            Log In
-                        </Button>
-                        <Button>Sign Up</Button>
+                    <div className="hidden md:flex items-center space-x-4 ">
+                        <SignInDropDown />
+
+                        <Link
+                            href={"/sign-up"}
+                            className="flex items-center gap-x-1.5 transition-colors rounded-[5px] px-4 py-1.5 text-sm hover:bg-primary text-black hover:text-white"
+                        >
+                            <UserPlus className="w-4 h-4" />
+                            <span>Sign Up</span>
+                        </Link>
+
+                        {/* <Link
+                            href={"/sign-in"}
+                            className="text-white px-4 py-1.5  text-sm bg-primary rounded-[5px] hover:bg-blue-800 transition-colors"
+                        >
+                            Sign In
+                        </Link> */}
+
+                        {/* Whats the best way to tell user to login as organizer */}
                     </div>
 
                     {/* Mobile Menu Toggle */}
@@ -149,3 +167,33 @@ const Header = () => {
 };
 
 export default Header;
+
+function SignInDropDown() {
+    return (
+        <DropdownMenu>
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="flex items-center gap-2 h-8">
+                        <LogIn className="h-4 w-4" />
+                        <span>Sign In</span>
+                    </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="center" className="w-40">
+                    <DropdownMenuItem asChild className="cursor-pointer py-2">
+                        <Link href="/organizer-login" className="flex items-center gap-2">
+                            <User className="h-4 w-4" />
+                            <span>User Login</span>
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild className="cursor-pointer py-2">
+                        <Link href="/organizer-login" className="flex items-center gap-2">
+                            <Users className="h-4 w-4" />
+                            <span>Organizer Login</span>
+                        </Link>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </DropdownMenu>
+    );
+}

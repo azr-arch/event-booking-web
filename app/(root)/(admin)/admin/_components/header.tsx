@@ -8,19 +8,19 @@ import UserNav from "./user-nav";
 const navItems = [
     {
         label: "Overview",
-        href: "/dashboard",
+        href: "/admin/dashboard",
     },
     {
         label: "Events",
-        href: "/events",
+        href: "/admin/events",
     },
     {
         label: "Venues",
-        href: "/venues",
+        href: "/admin/venues",
     },
     {
         label: "Settings",
-        href: "/settings",
+        href: "/admin/settings",
     },
 ];
 

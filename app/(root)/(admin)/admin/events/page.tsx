@@ -3,6 +3,8 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getAllEvents } from "@/lib/db-queries";
 
+// Causing build error during deployment
+// Had to add this line ( might fix later )
 export const dynamic = "force-dynamic";
 
 const EventsPage = async () => {

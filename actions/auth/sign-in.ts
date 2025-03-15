@@ -8,13 +8,13 @@ export async function signInAction({ email, password }: { email: string; passwor
     let redirectPath: string | null = "/";
 
     try {
-        await signIn("credentials", { email, password, redirectTo: "/dashboard" });
+        await signIn("credentials", { email, password });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        redirectPath = "/dashboard";
-    } catch (error: any) {
+        redirectPath = "/";
+    } catch (error) {
         redirectPath = null;
         return {
-            error: error?.message || "Login failed, try again later.",
+            error: (error as Error).message || "Login failed, try again later.",
         };
     } finally {
         if (redirectPath) {
