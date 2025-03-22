@@ -63,9 +63,6 @@ export const authConfig = {
     }),
   ],
   callbacks: {
-    async authorized({ auth }) {
-      return !!auth;
-    },
     async jwt({ token, user }) {
       if (user) {
         const customUser = user as User;
@@ -82,11 +79,6 @@ export const authConfig = {
         session.user.email = token.email!;
       }
       return session;
-    },
-    async redirect(params) {
-      console.log("In redirect");
-      console.log({ params });
-      return params.baseUrl;
     },
   },
   pages: {
