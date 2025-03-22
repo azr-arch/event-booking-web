@@ -117,7 +117,7 @@ export const LoginForm = () => {
               />
 
               {error && (
-                <div className="p-2 rounded-sm space-x-2 flex items-center bg-red-100 dark:bg-red-900 text-red-500 dark:text-white fade-in-50 ">
+                <div className="p-2 rounded-sm space-x-2 flex items-start bg-red-100 dark:bg-red-900 text-red-500 dark:text-white fade-in-50 ">
                   <XCircle className="w-4 h-4" />
                   <span className="text-sm font-medium">{error}</span>
                 </div>

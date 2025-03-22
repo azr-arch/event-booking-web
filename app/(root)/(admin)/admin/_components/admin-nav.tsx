@@ -43,7 +43,7 @@ export const AdminNav = () => {
   return (
     <nav className="pr-1">
       <Button
-        variant={"default"}
+        variant={"secondary"}
         className="w-full mb-3 h-9 px-3 py-0 justify-start font-normal   rounded-lg"
       >
         <PlusCircleIcon />

@@ -10,20 +10,21 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { LucideArrowUpRightFromSquare, UserIcon } from "lucide-react";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 import { signOutFn } from "@/actions/auth/sign-out";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Session } from "next-auth";
 
-const UserNav = () => {
-  const { data: session, status } = useSession();
+const UserNav = ({ session }: { session: Session | null }) => {
+  // const { data: session, status } = useSession();
 
-  if (status === "loading") {
+  if (!session) {
     return <UserNavLoading />;
   }
 
-  if (status === "unauthenticated") {
-    console.log("unauthenticated person");
-  }
+  // if (status === "unauthenticated") {
+  //   console.log("unauthenticated person");
+  // }
 
   return (
     <div className="ml-auto">
@@ -35,7 +36,7 @@ const UserNav = () => {
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="dark:bg-black dark:border-neutral-700 w-[180px]"
+          className="dark:bg-black dark:border-neutral-700 w-fit"
         >
           <DropdownMenuLabel className="flex flex-col items-start">
             {session?.user?.name}

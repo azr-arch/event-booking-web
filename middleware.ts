@@ -19,7 +19,7 @@ export default auth(async (req) => {
     nextUrl.pathname.startsWith("/sign-in") ||
     nextUrl.pathname.startsWith("/sign-up");
 
-  const isAdminRoute = nextUrl.pathname.startsWith("/admin");
+  const isAdminRoute = nextUrl.pathname.startsWith("/admin/");
   const isClientProtectedRoute = nextUrl.pathname.startsWith("/app");
   const isApiRoute = nextUrl.pathname.startsWith("/api");
   const isStaticFile = nextUrl.pathname.match(
@@ -45,7 +45,8 @@ export default auth(async (req) => {
   if (token) {
     if (token.role === Role.ADMIN || token.role === Role.ORGANIZER) {
       if (!isAdminRoute) {
-        return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+        const redirectUrl = new URL("/admin/dashboard", req.nextUrl.origin);
+        return NextResponse.redirect(redirectUrl);
       }
     }
 

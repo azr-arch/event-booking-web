@@ -15,9 +15,10 @@ export async function signInAction({
   } catch (error) {
     // Handling NEXT_REDIRECT_ERROR
     if ((error as Error).message.includes("NEXT_REDIRECT")) {
-      throw error;
+      return {
+        error: "Please refresh to move forward, working on this issue!",
+      };
     }
-
     return {
       error: (error as Error).message || "Login failed, try again later.",
     };
