@@ -13,7 +13,7 @@ const AuthLayout = ({ children }: { children: React.ReactNode }) => {
         <p className="max-w-lg text-center mx-auto text-xs">
           For trial organizer access, you can use the following credentials{" "}
           <br />
-          Email: johndoe@example.com Password: ********
+          Email: dummyaccc023@gmail.com Password: 12345678
         </p>
       </div>
 
