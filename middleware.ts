@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
 import { authConfig } from "@/auth.config";
 // import { DEFAULT_REDIRECT, PUBLIC_ROUTES } from "@/routes";
-import { getToken } from "next-auth/jwt";
+import { getToken, GetTokenParams } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
 
@@ -9,10 +9,19 @@ const { auth } = NextAuth(authConfig);
 
 export default auth(async (req) => {
   const { nextUrl } = req;
-  const token = await getToken({
-    req,
-    secret: process.env.AUTH_SECRET,
-  });
+  let params: GetTokenParams = {
+    req: req,
+    secret: process.env.AUTH_SECRET ?? "secret",
+  };
+
+  if (process.env.NODE_ENV === "production") {
+    params = {
+      ...params,
+      cookieName: "__Secure-authjs.session-token", // 🔒 Secure cookie for production
+    };
+  }
+
+  const token = await getToken(params);
 
   const isPublicRoute =
     nextUrl.pathname === "/" ||
