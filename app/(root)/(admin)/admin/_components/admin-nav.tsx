@@ -16,7 +16,7 @@ const ICON_STYLES = "w-4 h-4";
 
 const navItems = [
   {
-    label: "Overview",
+    label: "Dashboard",
     href: "/admin/dashboard",
     icon: <LayoutDashboardIcon className={ICON_STYLES} />,
   },

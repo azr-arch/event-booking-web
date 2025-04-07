@@ -2,6 +2,7 @@ import { Events } from "./_components/events";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { getAllEvents } from "@/lib/db-queries";
+import { Plus } from "lucide-react";
 
 // Causing build error during deployment
 // Had to add this line ( might fix later )
@@ -15,7 +16,10 @@ const EventsPage = async () => {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-4 sm:space-y-0">
         <h1 className="text-3xl font-bold">Event Management</h1>
         <Link href={"/admin/events/new"}>
-          <Button>Add New Event</Button>
+          <Button size={"sm"}>
+            New Event
+            <Plus className="w-4 h-4" />
+          </Button>
         </Link>
       </div>
       <Events data={events} />
