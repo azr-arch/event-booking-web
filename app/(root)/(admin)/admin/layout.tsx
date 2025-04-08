@@ -11,7 +11,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         <div className="bg-background h-full shadow-outline rounded-lg">
           <DashboardHeader />
           <Separator className=" mb-5" />
-          <div className="px-6 w-full">{children}</div>
+          <div className="px-6 py-2 w-full">{children}</div>
         </div>
       </div>
     </div>

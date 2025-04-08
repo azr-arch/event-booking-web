@@ -42,13 +42,15 @@ export const AdminNav = () => {
 
   return (
     <nav className="pr-1">
-      <Button
-        variant={"secondary"}
-        className="w-full mb-3 h-9 px-3 py-0 justify-start font-normal   rounded-lg"
-      >
-        <PlusCircleIcon />
-        Event create
-      </Button>
+      <Link href="/admin/events/new">
+        <Button
+          variant={"default"}
+          className="w-full mb-3 h-9 px-3 py-0 justify-start font-normal   rounded-lg"
+        >
+          <PlusCircleIcon />
+          New Event
+        </Button>
+      </Link>
 
       <ul className=" space-y-1">
         {navItems.map((item) => (
@@ -58,8 +60,8 @@ export const AdminNav = () => {
               className={cn(
                 "h-9 flex items-center gap-3 text-sm px-3 rounded-lg transition-colors duration-150",
                 pathname === item.href
-                  ? "bg-primary  text-white hover:bg-primary "
-                  : "text-primary/80 hover:text-primary hover:bg-gray-200"
+                  ? "bg-neutral-300 hover:bg-neutral-300 "
+                  : "text-primary/80 hover:text-primary hover:bg-neutral-300"
               )}
             >
               {item.icon}
