@@ -210,3 +210,11 @@ body {
     padding: 8px;
     animation: spin 3s linear infinite forwards;
 } */
+
+@layer base {
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+}

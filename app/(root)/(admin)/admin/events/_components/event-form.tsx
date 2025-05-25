@@ -27,7 +27,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { CalendarIcon, Eraser, Loader2, PlusCircle } from "lucide-react";
+import {
+  CalendarIcon,
+  DollarSign,
+  Eraser,
+  Loader2,
+  PlusCircle,
+} from "lucide-react";
 import { useLocationModal } from "@/hooks/use-location-modal";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -283,14 +289,20 @@ export const EventForm = () => {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Price</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(Number.parseFloat(e.target.value))
-                            }
-                          />
+                        <FormControl className="relative">
+                          <div className="relative flex items-center flex-row-reverse">
+                            <Input
+                              type="number"
+                              {...field}
+                              onChange={(e) =>
+                                field.onChange(
+                                  Number.parseFloat(e.target.value)
+                                )
+                              }
+                              className="appearance-none"
+                            />
+                            <DollarSign className=" h-4 w-4 mr-2" />
+                          </div>
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -309,6 +321,7 @@ export const EventForm = () => {
                             onChange={(e) =>
                               field.onChange(Number.parseInt(e.target.value))
                             }
+                            min={1}
                           />
                         </FormControl>
                         <FormMessage />
@@ -353,7 +366,9 @@ export const EventForm = () => {
                               disabled={(date) =>
                                 date < new Date() ||
                                 date <
-                                  form.getValues(`tickets.${index}.endSale`) ||
+                                  form.getValues(
+                                    `tickets.${index}.startSale`
+                                  ) ||
                                 date > form.getValues("startDate")
                               }
                               initialFocus
