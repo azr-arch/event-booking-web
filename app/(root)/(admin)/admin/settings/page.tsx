@@ -22,6 +22,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
+import { AppearanceTab } from "./_components/tabs/appearance-tab";
+
+// Fix this component structure
+// TODO create an index tab file
+// That will act and as client component and make this one a Server component
 
 export default function SettingsPage() {
   const [isDirty, setIsDirty] = useState(false);
@@ -182,45 +187,7 @@ export default function SettingsPage() {
         </TabsContent>
 
         <TabsContent value="appearance">
-          <Card>
-            <CardHeader>
-              <CardTitle>Appearance Settings</CardTitle>
-              <CardDescription>
-                Customize the look and feel of your application
-              </CardDescription>
-            </CardHeader>
-            <DropdownMenuSeparator className="mb-4" />
-
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="theme">Theme</Label>
-                <Select defaultValue="light" onValueChange={handleChange}>
-                  <SelectTrigger id="theme">
-                    <SelectValue placeholder="Select theme" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="accent-color">Accent Color</Label>
-                <Select defaultValue="blue" onValueChange={handleChange}>
-                  <SelectTrigger id="accent-color">
-                    <SelectValue placeholder="Select accent color" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="blue">Blue</SelectItem>
-                    <SelectItem value="green">Green</SelectItem>
-                    <SelectItem value="red">Red</SelectItem>
-                    <SelectItem value="purple">Purple</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
+          <AppearanceTab handleChange={handleChange} />
         </TabsContent>
       </Tabs>
     </div>

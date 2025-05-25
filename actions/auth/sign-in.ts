@@ -48,7 +48,7 @@ export async function signInAction({
       throw error;
     }
     return {
-      error: (error as Error).message || "Login failed, try again later.",
+      error: "Internal server error" || "Login failed, try again later.",
     };
   }
 }
