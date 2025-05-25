@@ -58,10 +58,10 @@ export const AdminNav = () => {
             <Link
               href={item.href}
               className={cn(
-                "h-9 flex items-center gap-3 text-sm px-3 rounded-lg transition-colors duration-150",
+                "h-9 flex hover:text-accent hover:bg-primary-hover items-center gap-3 text-sm px-3 rounded-lg transition-colors duration-150",
                 pathname === item.href
-                  ? "bg-neutral-300 hover:bg-neutral-300 "
-                  : "text-primary/80 hover:text-primary hover:bg-neutral-300"
+                  ? "bg-primary-active text-accent" // active state
+                  : "" // non active
               )}
             >
               {item.icon}

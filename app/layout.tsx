@@ -3,6 +3,7 @@ import "./globals.css";
 // import { ThemeProvider } from "@/components/providers/theme-provider";
 
 import { Inter } from "next/font/google";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 const inter = Inter({
   weight: ["400", "500", "600", "700"],
@@ -24,13 +25,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
-        {/* <ThemeProvider
+        <ThemeProvider
           attribute={"class"}
           defaultTheme="light"
           disableTransitionOnChange
-        > */}
-        {children}
-        {/* </ThemeProvider> */}
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

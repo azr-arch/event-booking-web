@@ -17,12 +17,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ThemeColorKey, THEMES } from "@/lib/constant";
+import { useTheme } from "next-themes";
 
-export const AppearanceTab = ({
-  handleChange,
-}: {
-  handleChange: () => void;
-}) => {
+export const AppearanceTab = ({}: { handleChange: () => void }) => {
+  const { setTheme } = useTheme();
+
+  const onThemeChange = (value: "light" | "dark" | "system") => {
+    setTheme(value);
+  };
+
   // Todo More work required
   const changeAccentColor = (value: string) => {
     // Find if given theme is present in constants
@@ -59,7 +62,7 @@ export const AppearanceTab = ({
       <CardContent className="space-y-4">
         <div className="space-y-2">
           <Label htmlFor="theme">Theme</Label>
-          <Select defaultValue="light" onValueChange={handleChange}>
+          <Select defaultValue="light" onValueChange={onThemeChange}>
             <SelectTrigger id="theme">
               <SelectValue placeholder="Select theme" />
             </SelectTrigger>

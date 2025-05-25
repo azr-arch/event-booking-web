@@ -7,6 +7,7 @@
 
 @layer base {
   :root {
+    /* Original Theme Variables */
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
     --card: 0 0% 100%;
@@ -32,9 +33,36 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+
+    /* Enhanced Interactive States - Light Mode */
+    --primary-hover: 240 5.9% 20%;
+    --primary-active: 240 5.9% 5%;
+    --primary-disabled: 240 4.8% 95.9%;
+
+    --secondary-hover: 240 4.8% 90%;
+    --secondary-active: 240 4.8% 85%;
+    --secondary-disabled: 240 4.8% 98%;
+
+    --card-hover: 0 0% 98%;
+    --card-active: 0 0% 96%;
+
+    --input-hover: 240 5.9% 85%;
+    --input-disabled: 240 4.8% 96%;
+
+    --nav-hover: 240 4.8% 95.9%;
+    --nav-active: 240 4.8% 90%;
+    --nav-selected: 240 4.8% 95.9%;
+
+    --link-hover: 240 3.8% 46.1%;
+    --link-active: 240 5.9% 5%;
+
+    --success: 142 76% 36%;
+    --warning: 38 92% 50%;
+    --info: 221 83% 53%;
   }
 
   .dark {
+    /* Original Dark Theme Variables */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
@@ -59,6 +87,32 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+
+    /* Enhanced Interactive States - Dark Mode */
+    --primary-hover: 0 0% 88%;
+    --primary-active: 0 0% 100%;
+    --primary-disabled: 240 3.7% 15.9%;
+
+    --secondary-hover: 240 3.7% 20%;
+    --secondary-active: 240 3.7% 25%;
+    --secondary-disabled: 240 3.7% 10%;
+
+    --card-hover: 240 10% 6%;
+    --card-active: 240 10% 8%;
+
+    --input-hover: 240 3.7% 18%;
+    --input-disabled: 240 3.7% 12%;
+
+    --nav-hover: 240 3.7% 15.9%;
+    --nav-active: 240 3.7% 20%;
+    --nav-selected: 240 3.7% 15.9%;
+
+    --link-hover: 240 5% 64.9%;
+    --link-active: 0 0% 100%;
+
+    --success: 142 76% 46%;
+    --warning: 38 92% 60%;
+    --info: 221 83% 63%;
   }
 }
 
